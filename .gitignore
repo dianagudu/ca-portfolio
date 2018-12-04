@@ -1,0 +1,6 @@
+**/**/*.o
+bin
+obj
+_future
+test
+.vscode
