@@ -4,13 +4,13 @@ A portfolio of heuristic algorithms for Combinatorial Auctions
 
 ## Prerequisites
 
-* BOOST
-* CPLEX
-* YAML-CPP
+* [Boost](https://www.boost.org/)
+* [CPLEX](https://www.ibm.com/analytics/cplex-optimizer)
+* [yaml-cpp](https://github.com/jbeder/yaml-cpp)
 
-To use the CPLEX algorithm, IBM's ILOG CPLEX software has to be installed. Free academic license are available. Follow the steps at [1][https://www.ibm.com/developerworks/community/blogs/jfp/entry/cplex_studio_in_ibm_academic_initiative?lang=en] to obtain it. Include and library paths can be changed in the ``makefile``.
+Free academic licenses for IBM's ILOG CPLEX software are [available](https://www.ibm.com/developerworks/community/blogs/jfp/entry/cplex_studio_in_ibm_academic_initiative?lang=en).
 
-Include and library paths for ``boost`` can be changed in the ``makefile``.
+Include and library paths for `CPLEX` and ``boost`` can be changed in the ``makefile``.
 
 On Debian stretch::
 
