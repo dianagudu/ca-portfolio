@@ -24,7 +24,8 @@
 
 #include "src/ca_factory.h"
 
-void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile, std::string infile) {
+void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
+                     std::string infile) {
   try {
     CA* ca = CAFactory::createAuction(instance, type);
     ca->run();
@@ -39,7 +40,8 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile, s
   }
 }
 
-void  Runner::runMode(Instance instance, RunMode mode, std::string outfile, std::string infile) {
+void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
+                     std::string infile) {
   std::vector<AuctionType> algos;
   switch (mode) {
     case RunMode::ALL:
@@ -47,9 +49,7 @@ void  Runner::runMode(Instance instance, RunMode mode, std::string outfile, std:
       break;
     case RunMode::HEURISTICS:
       for (auto type : AuctionType::_values())
-#ifdef CPLEX
         if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-#endif
           algos.push_back(type);
       break;
     case RunMode::RANDOM:
@@ -60,9 +60,7 @@ void  Runner::runMode(Instance instance, RunMode mode, std::string outfile, std:
       break;
     case RunMode::SAMPLES:
       for (auto type : AuctionType::_values())
-#ifdef CPLEX
         if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-#endif
           algos.push_back(type);
       break;
   }
@@ -89,20 +87,20 @@ void Runner::run(InputParams params) {
 }
 
 void Runner::writeStats(Stats stats, AuctionType type, std::string outfile,
-                         std::string infile) {
-    // set output mode: standard out or file
-    std::ostream* osp = &std::cout;
-    std::ofstream fout;
-    if (outfile != "") {
-      fout.open(outfile, std::ios::app);
-      osp = &fout;
-    }
+                        std::string infile) {
+  // set output mode: standard out or file
+  std::ostream* osp = &std::cout;
+  std::ofstream fout;
+  if (outfile != "") {
+    fout.open(outfile, std::ios::app);
+    osp = &fout;
+  }
 
-    // write stats
-    *osp << infile << "," << type << stats << std::endl;
+  // write stats
+  *osp << infile << "," << type << stats << std::endl;
 
-    // close file
-    if (outfile != "") {
-      fout.close();
-    }
+  // close file
+  if (outfile != "") {
+    fout.close();
+  }
 }

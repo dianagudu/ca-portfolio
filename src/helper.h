@@ -40,11 +40,9 @@ BETTER_ENUM(AuctionType, int,
   SA,
   SAS,
   CASANOVA,
-  CASANOVAS
-#ifdef CPLEX
-  , CPLEX
-  , RLPS
-#endif
+  CASANOVAS,
+  CPLEX,
+  RLPS
 )
 
 BETTER_ENUM(RunMode, int,
@@ -68,10 +66,8 @@ constexpr const char* describe_algorithms(AuctionType type) {
     case AuctionType::SAS: return "simulated annealing algorithm with focus on sellers";
     case AuctionType::CASANOVA: return "Casanova algorithm (stochastic local search)";
     case AuctionType::CASANOVAS: return "Casanova algorithm (stochastic local search) with focus on sellers";
-#ifdef CPLEX
     case AuctionType::CPLEX: return "optimal algorithm using CPLEX library to solve MILP";
-    case AuctionType::RLPS: return "RLPS";
-#endif
+    case AuctionType::RLPS: return "heuristic based on relaxed linear program (requires CPLEX library)";
     default: return "invalid auction type";
   }
 }

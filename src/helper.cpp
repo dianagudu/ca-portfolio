@@ -108,16 +108,20 @@ std::optional<InputParams> parse(int argc, char* argv[]) {
       return {};
     }
 
+    if (!vm.count("in")) {
+      throw std::logic_error(std::string("missing INFILE argument"));
+    }
+
     if (vm.count("mode")) {
       // validate run mode
       if (!RunMode::_is_valid_nocase(mode.c_str()))
-        throw std::invalid_argument(std::string("Mode ") + mode + " invalid.");
+        throw std::invalid_argument(std::string("mode ") + mode + " invalid.");
     }
 
     if (vm.count("algo")) {
       // validate algorithm in algo mode
       if (!AuctionType::_is_valid_nocase(algo.c_str()))
-        throw std::invalid_argument(std::string("Algorithm ") + algo +
+        throw std::invalid_argument(std::string("algorithm ") + algo +
                                     " invalid.");
     }
 
@@ -126,7 +130,8 @@ std::optional<InputParams> parse(int argc, char* argv[]) {
 
     return params;
   } catch (std::exception& e) {
-    std::cerr << "[ERROR] " << e.what() << std::endl;
+    std::cerr << argv[0] << ": " << e.what() << std::endl;
+    std::cerr << "Try '" << argv[0] << " --help' for more information." << std::endl;
     return {};
   }
 }
