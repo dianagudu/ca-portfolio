@@ -37,14 +37,13 @@ class BidSet {
 
   inline unsigned int N() { return quantities.size1(); }
   inline unsigned int L() { return quantities.size2(); }
-  inline const std::vector<double> &V() { return values; }
-  inline const boost::numeric::ublas::matrix<unsigned int> &Q() {
-    return quantities;
-  }
+  inline const auto &V() { return values; }
+  inline const auto &Q() { return quantities; }
 
   boost::unordered_map<unsigned int, double> computeAvgPrices();
   boost::unordered_map<unsigned int, double> computeDensities();
-  boost::unordered_map<unsigned int, double> computeDensities(std::vector<double> f);
+  boost::unordered_map<unsigned int, double> computeDensities(
+      std::vector<double> f);
   std::vector<unsigned int> computeQPerResource();
 };
 

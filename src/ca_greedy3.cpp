@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // --------------------------------------------------------------------------
 
-#include "ca_greedy1.h"
+#include "ca_greedy3.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/numeric/ublas/io.hpp>
@@ -25,12 +25,12 @@
 #include <iostream>
 #include <string>
 
-CAGreedy1::CAGreedy1(Instance instance_)
-    : CA(instance_, RelevanceMode::UNIFORM) {}
+CAGreedy3::CAGreedy3(Instance instance_)
+    : CA(instance_, RelevanceMode::RELATIVE_SCARCITY) {}
 
-CAGreedy1::~CAGreedy1() {}
+CAGreedy3::~CAGreedy3() {}
 
-void CAGreedy1::computeAllocation() {
+void CAGreedy3::computeAllocation() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
   unsigned int l = instance.L();

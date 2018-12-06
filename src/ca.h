@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// Copyright (C) Karlsruhe Institute of Technology, 2017
+// Copyright (C) Karlsruhe Institute of Technology, 2018
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,11 +24,10 @@
 #include <iostream>
 #include <vector>
 
+#include "src/helper.h"
 #include "src/bid_set_aux.h"
 #include "src/instance.h"
 #include "src/stats.h"
-
-enum class RelevanceMode { UNIFORM, SCARCITY, RELATIVE_SCARCITY };
 
 class CA {
  protected:
@@ -53,16 +52,15 @@ class CA {
   CA(Instance _instance, RelevanceMode mode);
   virtual ~CA(){};
 
-  const boost::numeric::ublas::matrix<int> &getAllocation() { return y; }
-  const boost::unordered_map<int, double> &getPricingBuyers() { return price_buyer; }
-  const boost::unordered_map<int, double> &getPricingSellers() { return price_seller; }
-  const Stats &getStats() { return stats; }
+  const auto &getAllocation() { return y; }
+  const auto &getPricingBuyers() { return price_buyer; }
+  const auto &getPricingSellers() { return price_seller; }
+  const auto getStats() { return stats; }
 
   void run();
-  void printResults(std::string mechanism_name, std::string solution_file);
+  void printResults(std::string mechanism_name);
 
  protected:
-  void resetFinalPrices();
   void computeStatistics();
   virtual void computeAllocation() = 0;  // WDP to be overwritten for each
                                          // implemented mechanism

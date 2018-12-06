@@ -1,5 +1,5 @@
 // --------------------------------------------------------------------------
-// Copyright (C) Karlsruhe Institute of Technology, 2018
+// Copyright (C) Karlsruhe Institute of Technology, 2017
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -15,27 +15,16 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // --------------------------------------------------------------------------
 
-#ifndef SRC_BID_SET_AUX_H_
-#define SRC_BID_SET_AUX_H_
+#ifndef CA_GREEDY1_S_H_
+#define CA_GREEDY1_S_H_
 
-#include <boost/unordered_map.hpp>
-#include <vector>
+#include "src/ca.h"
 
-#include "src/bid_set.h"
-
-class BidSetAux {
- protected:
-  std::vector<double> f;                                 // relevance factors
-  boost::unordered_map<unsigned int, double> avg_price;  // average prices
-  boost::unordered_map<unsigned int, double> density;    // densities
-
+class CAGreedy1S: public CA {
  public:
-  BidSetAux() {}
-  BidSetAux(BidSet bidset);
-  BidSetAux(BidSet bidset, std::vector<double> _f);
-
-  inline boost::unordered_map<unsigned int, double> &getDensity() { return density; }
-  inline boost::unordered_map<unsigned int, double> &getAvgPrice() { return avg_price; }
+    CAGreedy1S(Instance instance_);
+    ~CAGreedy1S();
+    void computeAllocation();
 };
 
-#endif  // SRC_BID_SET_AUX_H_
+#endif  // CA_GREEDY1_S_H_

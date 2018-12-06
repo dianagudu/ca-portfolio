@@ -34,38 +34,37 @@ CA::CA(Instance _instance)
 CA::CA(Instance _instance, RelevanceMode mode) : instance(_instance) {
   std::vector<double> f_b, f_a;
   switch (mode) {
-      case RelevanceMode::UNIFORM: {
-        f_b = std::vector<double>(instance.L(), 1.);
-        f_a = std::vector<double>(instance.L(), 1.);
-        break;
-      }
-      case RelevanceMode::SCARCITY: {
-        auto capacity = instance.getAsks().computeQPerResource();
-        auto demand = instance.getBids().computeQPerResource();
-        for (unsigned int k = 0; k < instance.L(); ++k) {
-          f_b.push_back(1. / capacity[k]);
-          f_a.push_back(1. / demand[k]);
-        }
-        break;
-      }
-      case RelevanceMode::RELATIVE_SCARCITY: {
-        auto capacity = instance.getAsks().computeQPerResource();
-        auto demand = instance.getBids().computeQPerResource();
-        for (unsigned int k = 0; k < instance.L(); ++k) {
-          f_b.push_back(std::abs(demand[k] - capacity[k]) * 1. / demand[k]);
-          f_a.push_back(std::abs(demand[k] - capacity[k]) * 1. / capacity[k]);
-        }
-        break;
-      }
-      default:
-        break;
+    case RelevanceMode::UNIFORM: {
+      f_b = std::vector<double>(instance.L(), 1.);
+      f_a = std::vector<double>(instance.L(), 1.);
+      break;
     }
+    case RelevanceMode::SCARCITY: {
+      auto capacity = instance.getAsks().computeQPerResource();
+      auto demand = instance.getBids().computeQPerResource();
+      for (unsigned int k = 0; k < instance.L(); ++k) {
+        f_b.push_back(1. / capacity[k]);
+        f_a.push_back(1. / demand[k]);
+      }
+      break;
+    }
+    case RelevanceMode::RELATIVE_SCARCITY: {
+      auto capacity = instance.getAsks().computeQPerResource();
+      auto demand = instance.getBids().computeQPerResource();
+      for (unsigned int k = 0; k < instance.L(); ++k) {
+        f_b.push_back(std::abs((demand[k] - capacity[k]) * 1. / demand[k]));
+        f_a.push_back(std::abs((demand[k] - capacity[k]) * 1. / capacity[k]));
+      }
+      break;
+    }
+    default:
+      break;
+  }
   tmp_bids = BidSetAux(instance.getBids(), f_b);
   tmp_asks = BidSetAux(instance.getAsks(), f_a);
 }
 
 void CA::run() {
-  std::cout << "in run..." << std::endl;
   // solve WDP and measure time
   Time t0(boost::posix_time::microsec_clock::local_time());
   computeAllocation();
@@ -77,7 +76,7 @@ void CA::run() {
   stats.setTimeWdp(usec / 1000.);
 }
 
-void CA::resetFinalPrices() {
+void CA::computeKPricing(double kappa) {
   // initialise all prices to 0
   for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
     price_buyer[i] = 0.;
@@ -85,10 +84,8 @@ void CA::resetFinalPrices() {
   for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
     price_seller[j] = 0.;
   }
-}
 
-void CA::computeKPricing(double kappa) {
-  resetFinalPrices();
+  // compute prices
   for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
     for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
       if (y(i, j) > 0) {
@@ -170,7 +167,7 @@ void CA::computeStatistics() {
   stats.setAvgUnitPrice(avg_unit_price);
 }
 
-void CA::printResults(std::string mechanism_name, std::string solution_file) {
+void CA::printResults(std::string mechanism_name) {
   // print summary to standard output
   stats.printFriendly(std::cout, mechanism_name);
 }

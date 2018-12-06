@@ -1,5 +1,5 @@
 # BOOST libraries
-BOOST_LIB=-lboost_mpi -lboost_serialization -lboost_system -lboost_filesystem -lboost_date_time
+BOOST_LIB=-lboost_mpi -lboost_serialization -lboost_system -lboost_filesystem -lboost_date_time -lboost_program_options
 BOOST_INCLUDE=-I/usr/include/boost
 BOOST_LIBDIR=-L/usr/lib/x86_64-linux-gnu
 
@@ -21,7 +21,7 @@ RM=rm -rf
 LDLIBS=-lstdc++ -lm ${BOOST_LIB} ${YAML_LIB}
 LDFLAGS=-L/usr/local/lib ${BOOST_LIBDIR} ${YAML_LIBDIR}
 CXXFLAGS=-I. ${BOOST_INCLUDE} ${YAML_INCLUDE}
-CXX=g++ -std=c++14 -DIL_STD  -Wall -g
+CXX=g++-8 -std=c++17 -DIL_STD  -Wall -g
 
 # to use the CPLEX libs, compile with CPLEX=true
 ifdef CPLEX

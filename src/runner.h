@@ -15,27 +15,27 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // --------------------------------------------------------------------------
 
-#ifndef SRC_BID_SET_AUX_H_
-#define SRC_BID_SET_AUX_H_
+#ifndef SRC_RUNNER_H_
+#define SRC_RUNNER_H_
 
-#include <boost/unordered_map.hpp>
-#include <vector>
+#include <string>
+#include <iostream>
 
-#include "src/bid_set.h"
+#include "src/helper.h"
+#include "src/instance.h"
+#include "src/stats.h"
 
-class BidSetAux {
- protected:
-  std::vector<double> f;                                 // relevance factors
-  boost::unordered_map<unsigned int, double> avg_price;  // average prices
-  boost::unordered_map<unsigned int, double> density;    // densities
-
+class Runner {
  public:
-  BidSetAux() {}
-  BidSetAux(BidSet bidset);
-  BidSetAux(BidSet bidset, std::vector<double> _f);
+  static void run(InputParams params);
 
-  inline boost::unordered_map<unsigned int, double> &getDensity() { return density; }
-  inline boost::unordered_map<unsigned int, double> &getAvgPrice() { return avg_price; }
+ private:
+  static void runAlgo(Instance instance, AuctionType type, std::string outfile,
+                      std::string infile);
+  static void runMode(Instance instance, RunMode mode, std::string outfile,
+                      std::string infile);
+  static void writeStats(Stats stats, AuctionType type, std::string outfile,
+                         std::string infile);
 };
 
-#endif  // SRC_BID_SET_AUX_H_
+#endif  // SRC_RUNNER_H_
