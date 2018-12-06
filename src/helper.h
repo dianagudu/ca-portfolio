@@ -19,7 +19,7 @@
 #define SRC_HELPER_H_
 
 #include <boost/program_options.hpp>
-#include <optional>
+#include <boost/optional.hpp>
 #include "src/enum.h"
 
 BETTER_ENUM(RelevanceMode, int,
@@ -100,6 +100,6 @@ void conflicting_options(const boost::program_options::variables_map& vm,
                          const char* opt1, const char* opt2);
 
 void usage(int argc, char* argv[], boost::program_options::options_description);
-std::optional<InputParams> parse(int argc, char* argv[]);
+boost::optional<InputParams> parse(int argc, char* argv[]);
 
 #endif  // SRC_HELPER_H_

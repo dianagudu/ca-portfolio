@@ -21,14 +21,14 @@ RM=rm -rf
 LDLIBS=-lstdc++ -lm ${BOOST_LIB} ${YAML_LIB}
 LDFLAGS=-L/usr/local/lib ${BOOST_LIBDIR} ${YAML_LIBDIR}
 CXXFLAGS=-I. ${BOOST_INCLUDE} ${YAML_INCLUDE}
-CXX=g++-8 -std=c++17 -DIL_STD  -Wall -g
+CXX=g++ -DIL_STD  -Wall -g #
 
 # to use the CPLEX libs, compile with CPLEX=true
 ifdef CPLEX
 	LDLIBS+=${CPLEX_LIB} 
 	LDFLAGS+=${CPLEX_LIBDIR} ${CONCERT_LIBDIR} 
 	CXXFLAGS+=${CPLEX_INCLUDE} ${CONCERT_INCLUDE} 
-	CXX+=-DCPLEX #
+	CXX+=-D_CPLEX #
 endif
 
 SRCDIR=src

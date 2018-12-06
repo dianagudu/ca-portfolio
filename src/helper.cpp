@@ -18,6 +18,7 @@
 #include "src/helper.h"
 
 #include <boost/program_options.hpp>
+#include <boost/optional.hpp>
 #include <iomanip>
 #include <iostream>
 
@@ -65,11 +66,11 @@ void conflicting_options(const boost::program_options::variables_map& vm,
                          const char* opt1, const char* opt2) {
   if (vm.count(opt1) && !vm[opt1].defaulted() && vm.count(opt2) &&
       !vm[opt2].defaulted())
-    throw std::logic_error(std::string("Conflicting options '") + opt1 +
+    throw std::logic_error(std::string("conflicting options '") + opt1 +
                            "' and '" + opt2 + "'.");
 }
 
-std::optional<InputParams> parse(int argc, char* argv[]) {
+boost::optional<InputParams> parse(int argc, char* argv[]) {
   try {
     InputParams params;
     std::string mode;

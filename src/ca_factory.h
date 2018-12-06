@@ -53,7 +53,7 @@ class CAFactory {
         // return new CAGreedy1(instance);
       case AuctionType::CASANOVAS:
         // return new CAGreedy1(instance);
-#ifdef CPLEX
+#ifdef _CPLEX
       case AuctionType::CPLEX:
         // return new CAGreedy1(instance);
       case AuctionType::RLPS:
