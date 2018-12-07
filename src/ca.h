@@ -24,8 +24,8 @@
 #include <iostream>
 #include <vector>
 
-#include "src/helper.h"
 #include "src/bid_set_aux.h"
+#include "src/helper.h"
 #include "src/instance.h"
 #include "src/stats.h"
 
@@ -37,6 +37,10 @@ class CA {
   // auxiliary structs
   BidSetAux tmp_bids;
   BidSetAux tmp_asks;
+
+  // vectors of bid and ask indices => they can be reordered to solve the wdp
+  std::vector<int> bid_index;
+  std::vector<int> ask_index;
 
   // output of allocation and pricing
   std::vector<int> x;                    // xi
@@ -64,6 +68,7 @@ class CA {
   void computeStatistics();
   virtual void computeAllocation() = 0;  // WDP to be overwritten for each
                                          // implemented mechanism
+  virtual void resetAllocation();  // can be overwritten to reset all tmp vars
   virtual void computeKPricing(double kappa);
 };
 

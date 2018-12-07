@@ -35,20 +35,6 @@ void CAGreedy1::computeAllocation() {
   unsigned int m = instance.getAsks().N();
   unsigned int l = instance.L();
 
-  // reset variables if new allocation must be calculated
-  x = std::vector<int>(n, 0);
-  y = boost::numeric::ublas::zero_matrix<int>(n, m);
-
-  // vectors of bid and ask indices => they must be sorted by density
-  std::vector<int> bid_index;
-  std::vector<int> ask_index;
-  for (unsigned int i = 0; i < n; ++i) {
-    bid_index.push_back(i);
-  }
-  for (unsigned int j = 0; j < m; ++j) {
-    ask_index.push_back(j);
-  }
-
   // sort bids descendingly by density
   std::sort(bid_index.begin(), bid_index.end(),
             [this](unsigned int i, unsigned int j) -> bool {

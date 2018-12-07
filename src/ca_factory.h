@@ -23,6 +23,8 @@
 #include "src/ca_greedy1_s.h"
 #include "src/ca_greedy2.h"
 #include "src/ca_greedy3.h"
+#include "src/ca_hill1.h"
+#include "src/ca_hill1_s.h"
 #include "src/helper.h"
 
 class CAFactory {
@@ -38,9 +40,9 @@ class CAFactory {
       case AuctionType::GREEDY1S:
         return new CAGreedy1S(instance);
       case AuctionType::HILL1:
-        // return new CAGreedy1(instance);
+        return new CAHill1(instance);
       case AuctionType::HILL1S:
-        // return new CAGreedy1(instance);
+        return new CAHill1S(instance);
       case AuctionType::HILL2:
         // return new CAGreedy1(instance);
       case AuctionType::HILL2S:

@@ -29,9 +29,21 @@ using TimeDuration = boost::posix_time::time_duration;
 CA::CA(Instance _instance)
     : instance(_instance),
       tmp_bids(BidSetAux(instance.getBids())),
-      tmp_asks(BidSetAux(instance.getAsks())) {}
+      tmp_asks(BidSetAux(instance.getAsks())),
+      x(_instance.getBids().N(), 0),
+      y(_instance.getBids().N(), _instance.getAsks().N()) {
+  for (unsigned int i = 0; i < _instance.getBids().N(); ++i) {
+    bid_index.push_back(i);
+  }
+  for (unsigned int j = 0; j < _instance.getAsks().N(); ++j) {
+    ask_index.push_back(j);
+  }
+}
 
-CA::CA(Instance _instance, RelevanceMode mode) : instance(_instance) {
+CA::CA(Instance _instance, RelevanceMode mode)
+    : instance(_instance),
+      x(_instance.getBids().N(), 0),
+      y(_instance.getBids().N(), _instance.getAsks().N()) {
   std::vector<double> f_b, f_a;
   switch (mode) {
     case RelevanceMode::UNIFORM: {
@@ -62,9 +74,16 @@ CA::CA(Instance _instance, RelevanceMode mode) : instance(_instance) {
   }
   tmp_bids = BidSetAux(instance.getBids(), f_b);
   tmp_asks = BidSetAux(instance.getAsks(), f_a);
+  for (unsigned int i = 0; i < _instance.getBids().N(); ++i) {
+    bid_index.push_back(i);
+  }
+  for (unsigned int j = 0; j < _instance.getAsks().N(); ++j) {
+    ask_index.push_back(j);
+  }
 }
 
 void CA::run() {
+  resetAllocation();
   // solve WDP and measure time
   Time t0(boost::posix_time::microsec_clock::local_time());
   computeAllocation();
@@ -76,7 +95,19 @@ void CA::run() {
   stats.setTimeWdp(usec / 1000.);
 }
 
-void CA::computeKPricing(double kappa) {
+void CA::resetAllocation() {
+  // reset variables if new allocation must be calculated
+  x = std::vector<int>(instance.getBids().N(), 0);
+  y = boost::numeric::ublas::zero_matrix<int>(instance.getBids().N(),
+                                              instance.getAsks().N());
+
+  for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
+    bid_index.push_back(i);
+  }
+  for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
+    ask_index.push_back(j);
+  }
+
   // initialise all prices to 0
   for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
     price_buyer[i] = 0.;
@@ -84,7 +115,9 @@ void CA::computeKPricing(double kappa) {
   for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
     price_seller[j] = 0.;
   }
+}
 
+void CA::computeKPricing(double kappa) {
   // compute prices
   for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
     for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
