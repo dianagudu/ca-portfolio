@@ -22,9 +22,9 @@
 #include <iomanip>
 #include <iostream>
 
-void usage(int argc, char* argv[], boost::program_options::options_description desc) {
-  std::cout << "Usage: " << argv[0] << " [-m MODE] [-o OUTFILE] [-i] INFILE(s)" << std::endl
-            << "   or: " << argv[0] << " [-a ALGO] [-o OUTFILE] [-i] INFILE(s)" << std::endl
+void usage(char* program_name, boost::program_options::options_description desc) {
+  std::cout << "Usage: " << program_name << " [-m MODE] [-o OUTFILE] [-i] INFILE(s)" << std::endl
+            << "   or: " << program_name << " [-a ALGO] [-o OUTFILE] [-i] INFILE(s)" << std::endl
             << std::endl << "Run algorithm portfolio on auction instance(s) stored in INFILE(s)."
             << std::endl << "By default, the portfolio is run in HEURISTICS mode, and stats are"
             << std::endl << "printed to standard out."
@@ -105,7 +105,7 @@ boost::optional<InputParams> parse(int argc, char* argv[]) {
     conflicting_options(vm, "mode", "algo");
 
     if (vm.count("help")) {
-      usage(argc, argv, desc);
+      usage(argv[0], desc);
       return {};
     }
 

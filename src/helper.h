@@ -99,7 +99,7 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& v);
 void conflicting_options(const boost::program_options::variables_map& vm,
                          const char* opt1, const char* opt2);
 
-void usage(int argc, char* argv[], boost::program_options::options_description);
+void usage(char* program_name, boost::program_options::options_description);
 boost::optional<InputParams> parse(int argc, char* argv[]);
 
 #endif  // SRC_HELPER_H_
