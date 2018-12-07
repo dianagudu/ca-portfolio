@@ -29,9 +29,9 @@ class CAHill1S : public CA {
  public:
   CAHill1S(Instance instance_);
   ~CAHill1S();
-  void computeAllocation();
 
  private:
+  void computeAllocation();
   void doGreedy();
   bool locallyImprove();
 

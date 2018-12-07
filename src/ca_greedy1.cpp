@@ -17,14 +17,6 @@
 
 #include "ca_greedy1.h"
 
-#include <boost/lexical_cast.hpp>
-#include <boost/numeric/ublas/io.hpp>
-
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <string>
-
 CAGreedy1::CAGreedy1(Instance instance_)
     : CA(instance_, RelevanceMode::UNIFORM) {}
 

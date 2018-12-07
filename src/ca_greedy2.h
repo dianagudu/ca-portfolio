@@ -20,11 +20,13 @@
 
 #include "src/ca.h"
 
-class CAGreedy2: public CA {
+class CAGreedy2 : public CA {
  public:
-    CAGreedy2(Instance instance_);
-    ~CAGreedy2();
-    void computeAllocation();
+  CAGreedy2(Instance instance_);
+  ~CAGreedy2();
+
+ private:
+  void computeAllocation();
 };
 
 #endif  // CA_GREEDY2_H_

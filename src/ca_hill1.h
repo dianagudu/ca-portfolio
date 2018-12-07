@@ -25,24 +25,25 @@
 
 #include "src/ca.h"
 
-class CAHill1: public CA {
-  public:
-    CAHill1(Instance instance_);
-    ~CAHill1();
-    void computeAllocation();
-  private:  
-    void doGreedy();
-    bool locallyImprove();
+class CAHill1 : public CA {
+ public:
+  CAHill1(Instance instance_);
+  ~CAHill1();
 
-    double welfare = 0.;
-    
-    // temporary vars
-    boost::numeric::ublas::matrix<int> _y;
-    std::vector<int> _x;
-    double _welfare = 0.;
+ private:
+  void computeAllocation();
+  void doGreedy();
+  bool locallyImprove();
 
-    // critical index, or last allocated bid
-    unsigned int critical_i;
+  double welfare = 0.;
+
+  // temporary vars
+  boost::numeric::ublas::matrix<int> _y;
+  std::vector<int> _x;
+  double _welfare = 0.;
+
+  // critical index, or last allocated bid
+  unsigned int critical_i;
 };
 
 #endif  // CA_HILL1_H_

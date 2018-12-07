@@ -15,18 +15,38 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // --------------------------------------------------------------------------
 
-#ifndef CA_GREEDY1_H_
-#define CA_GREEDY1_H_
+#ifndef CA_HILL2_H_
+#define CA_HILL2_H_
+
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/unordered_map.hpp>
+
+#include <vector>
 
 #include "src/ca.h"
 
-class CAGreedy1 : public CA {
+class CAHill2 : public CA {
  public:
-  CAGreedy1(Instance instance_);
-  ~CAGreedy1();
-
+  CAHill2(Instance instance_);
+  ~CAHill2();
+  
  private:
   void computeAllocation();
+  void resetAllocation();
+  void generateInitialSolution();
+  bool locallyImprove();
+
+  std::vector<int> z;  // same as x, but for sellers
+  double welfare = 0.;
+
+  // temporary vars
+  boost::numeric::ublas::matrix<int> _y;
+  std::vector<int> _x;
+  std::vector<int> _z;
+  double _welfare = 0.;
+
+  // maximum number of neighbors
+  unsigned int num_neighbors = 0;
 };
 
-#endif  // CA_GREEDY1_H_
+#endif  // CA_HILL2_H_

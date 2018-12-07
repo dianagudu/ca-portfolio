@@ -17,15 +17,6 @@
 
 #include "ca_hill1.h"
 
-#include <boost/lexical_cast.hpp>
-#include <boost/numeric/ublas/io.hpp>
-
-#include <cstdlib>
-#include <fstream>
-#include <iostream>
-#include <random>
-#include <string>
-
 CAHill1::CAHill1(Instance instance_) : CA(instance_) {}
 
 CAHill1::~CAHill1() {}
