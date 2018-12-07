@@ -12,29 +12,29 @@ Free academic licenses for IBM's ILOG CPLEX software are [available](https://www
 
 Include and library paths for `CPLEX` and ``boost`` can be changed in the ``makefile``.
 
-On Debian stretch::
+On Debian stretch:
 
     $ sudo apt-get install libboost-all-dev libyaml-cpp0.5v5 libyaml-cpp-dev
 
 ## Running the code
 
-Compile the source code::
+Compile the source code:
 
     $ make
 
-Compile the source code with the CPLEX library::
+Compile the source code with the CPLEX library:
 
     $ make CPLEX=true
 
-Run unit tests::
+Run unit tests:
 
     $ make test
 
-Run unit tests, including the CPLEX library::
+Run unit tests, including the CPLEX library:
 
     $ make test CPLEX=true
 
-Run the program::
+Run the program:
 
     Usage: ./bin/main [-m MODE] [-o OUTFILE] [-i] INFILE(s)
        or: ./bin/main [-a ALGO] [-o OUTFILE] [-i] INFILE(s)

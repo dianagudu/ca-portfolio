@@ -25,6 +25,7 @@ CAHill2::CAHill2(Instance instance_)
 CAHill2::~CAHill2() {}
 
 void CAHill2::computeAllocation() {
+  srand(time(NULL));
   generateInitialSolution();
   while (locallyImprove())
     ;

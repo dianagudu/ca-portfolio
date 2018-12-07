@@ -15,25 +15,45 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // --------------------------------------------------------------------------
 
-#include "ca_hill2_s.h"
+#include "ca_sa.h"
 
 #include <random>
 
-CAHill2S::CAHill2S(Instance instance_)
-    : CA(instance_), z(instance_.getAsks().N(), 0) {}
+CASA::CASA(Instance instance_) : CA(instance_), z(instance_.getAsks().N(), 0) {}
 
-CAHill2S::~CAHill2S() {}
+CASA::~CASA() {}
 
-void CAHill2S::computeAllocation() {
+void CASA::computeAllocation() {
   srand(time(NULL));
   generateInitialSolution();
-  while (locallyImprove())
-    ;
+
+  while (T > T_min) {
+    neighbor();
+    ap = acceptanceProbability();
+    if (ap > (((double)rand() / (RAND_MAX)))) {
+      x = _x;
+      y = _y;
+      z = _z;
+      welfare = _welfare;
+      if (welfare > best_welfare) {
+        best_welfare = welfare;
+        best_y = y;
+        best_x = x;
+      }
+    }
+    T *= alpha;
+  }
+  y = _y = best_y;
+  x = _x = best_x;
 }
 
-// the neighbors are selected by flipping z bits, i.e. which sellers
-// allocate resources
-bool CAHill2S::locallyImprove() {
+double CASA::acceptanceProbability() {
+  if (welfare == 0) return 2.;
+  double ap = exp((_welfare - welfare) / abs(welfare) / T);
+  return ap;
+}
+
+void CASA::neighbor() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
   unsigned int l = instance.L();
@@ -44,49 +64,46 @@ bool CAHill2S::locallyImprove() {
   _z = z;
   _welfare = welfare;
 
-  // randomly select one ask
-  unsigned int j = rand() % m;
-  if (_z[j] == 0) {
-    // if z_j==0, try to find a bid to match from sorted bids
-    unsigned int i = 0;
-    while (i < n) {
-      // check if bidder i has already allocated its resources
-      if (_x[bid_index[i]] == 0) {
+  // randomly select one bid
+  unsigned int i = rand() % n;
+  if (_x[i]) {  // if x_i==1 set it to 0
+    _welfare -= instance.getBids().V()[i];
+    _x[i] = 0;
+    for (unsigned int j = 0; j < m; ++j) {
+      if (_y(i, j)) {
+        _welfare += instance.getAsks().V()[j];
+        _y(i, j) = 0;
+        _z[j] = 0;
+        break;
+      }
+    }
+  } else {  // x_i==0, try to find an ask to match from sorted asks
+    unsigned int j = 0;
+    while (j < m) {
+      // check if seller j has already allocated its resources
+      if (_z[ask_index[j]] == 0) {
         unsigned int k = 0;
-        while (k < l && instance.getBids().Q()(bid_index[i], k) <=
-                            instance.getAsks().Q()(j, k)) {
+        while (k < l && instance.getBids().Q()(i, k) <=
+                            instance.getAsks().Q()(ask_index[j], k)) {
           ++k;
         }
-        // seller j can allocate resources to bidder bid_index[i]
+        // seller ask_index[j] can allocate resources to bidder i
         if (k == l &&
-            instance.getBids().V()[bid_index[i]] >= instance.getAsks().V()[j]) {
-          _x[bid_index[i]] = 1;
-          _y(bid_index[i], j) = 1;
-          _z[j] = 1;
+            instance.getBids().V()[i] >= instance.getAsks().V()[ask_index[j]]) {
+          _x[i] = 1;
+          _y(i, ask_index[j]) = 1;
+          _z[ask_index[j]] = 1;
           _welfare +=
-              instance.getBids().V()[bid_index[i]] - instance.getAsks().V()[j];
+              instance.getBids().V()[i] - instance.getAsks().V()[ask_index[j]];
           break;
         }
       }
-      ++i;
+      ++j;
     }
   }
-  if (_welfare > welfare) {
-    x = _x;
-    y = _y;
-    z = _z;
-    welfare = _welfare;
-    num_neighbors = 0;
-    return true;
-  }
-  if (num_neighbors < m) {
-    ++num_neighbors;
-    return true;
-  }
-  return false;
 }
 
-void CAHill2S::generateInitialSolution() {
+void CASA::generateInitialSolution() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
   unsigned int l = instance.L();
@@ -102,7 +119,7 @@ void CAHill2S::generateInitialSolution() {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
 
-  // compute greedy1s solution
+  // compute greedy1 solution
   unsigned int i = 0;
   unsigned int j = 0;
   while (i < n && j < m) {
@@ -119,13 +136,13 @@ void CAHill2S::generateInitialSolution() {
       y(bid_index[i], ask_index[j]) = 1;
       welfare += instance.getBids().V()[bid_index[i]] -
                  instance.getAsks().V()[ask_index[j]];
-      ++j;
+      ++i;
     }
-    ++i;
+    ++j;
   }
 }
 
-void CAHill2S::resetAllocation() {
+void CASA::resetAllocation() {
   // reset variables if new allocation must be calculated
   x = std::vector<int>(instance.getBids().N(), 0);
   z = std::vector<int>(instance.getAsks().N(), 0);

@@ -43,6 +43,7 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
 void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
                      std::string infile) {
   std::vector<AuctionType> algos;
+  int nruns = 1;
   switch (mode) {
     case RunMode::ALL:
       for (auto type : AuctionType::_values()) algos.push_back(type);
@@ -57,6 +58,7 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
       algos.push_back(AuctionType::SAS);
       algos.push_back(AuctionType::CASANOVA);
       algos.push_back(AuctionType::CASANOVAS);
+      nruns = 100;
       break;
     case RunMode::SAMPLES:
       for (auto type : AuctionType::_values())
@@ -65,8 +67,10 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
       break;
   }
 
-  for (auto type : algos) {
-    Runner::runAlgo(instance, type, outfile, infile);
+  for (int run = 0; run < nruns; ++run) {
+    for (auto type : algos) {
+        Runner::runAlgo(instance, type, outfile, infile);
+    }
   }
 }
 

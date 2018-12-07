@@ -50,18 +50,18 @@ class CAFactory {
       case AuctionType::HILL2S:
         return new CAHill2S(instance);
       case AuctionType::SA:
-        // return new CAGreedy1(instance);
+        // return new CASA(instance);
       case AuctionType::SAS:
-        // return new CAGreedy1(instance);
+        // return new CASAS(instance);
       case AuctionType::CASANOVA:
-        // return new CAGreedy1(instance);
+        // return new CACasanova(instance);
       case AuctionType::CASANOVAS:
-        // return new CAGreedy1(instance);
+        // return new CACasanovaS(instance);
 #ifdef _CPLEX
       case AuctionType::CPLEX:
-        // return new CAGreedy1(instance);
+        // return new CACplex(instance);
       case AuctionType::RLPS:
-        // return new CAGreedy1(instance);
+        // return new CARlps(instance);
 #endif
       default:
         throw std::invalid_argument(std::string(type._to_string()) +
