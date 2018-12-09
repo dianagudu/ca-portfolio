@@ -28,23 +28,18 @@ void CASA::computeAllocation() {
   generateInitialSolution();
 
   while (T > T_min) {
-    neighbor();
-    ap = acceptanceProbability();
-    if (ap > (((double)rand() / (RAND_MAX)))) {
-      x = _x;
-      y = _y;
-      z = _z;
-      welfare = _welfare;
-      if (welfare > best_welfare) {
-        best_welfare = welfare;
-        best_y = y;
-        best_x = x;
+    for (unsigned int iter = 0; iter < niter; ++iter) {
+      neighbor();
+      ap = acceptanceProbability();
+      if (ap > ((double)rand() / RAND_MAX)) {
+        x = _x;
+        y = _y;
+        z = _z;
+        welfare = _welfare;
       }
     }
     T *= alpha;
   }
-  y = _y = best_y;
-  x = _x = best_x;
 }
 
 double CASA::acceptanceProbability() {

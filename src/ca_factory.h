@@ -27,6 +27,8 @@
 #include "src/ca_hill1_s.h"
 #include "src/ca_hill2.h"
 #include "src/ca_hill2_s.h"
+#include "src/ca_sa.h"
+#include "src/ca_sa_s.h"
 #include "src/helper.h"
 
 class CAFactory {
@@ -50,9 +52,9 @@ class CAFactory {
       case AuctionType::HILL2S:
         return new CAHill2S(instance);
       case AuctionType::SA:
-        // return new CASA(instance);
+        return new CASA(instance);
       case AuctionType::SAS:
-        // return new CASAS(instance);
+        return new CASAS(instance);
       case AuctionType::CASANOVA:
         // return new CACasanova(instance);
       case AuctionType::CASANOVAS:

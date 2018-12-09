@@ -46,14 +46,12 @@ class CASA : public CA {
   std::vector<int> _z;
   double _welfare = 0.;
 
-  boost::numeric::ublas::matrix<int> best_y;
-  std::vector<int> best_x;
-  double best_welfare = 0;
-
+  // SA-specific params
   double ap;
   double T = 1.0;
   const double T_min = 0.00001;
-  const double alpha = 0.99;
+  const double alpha = 0.9;
+  const unsigned int niter = 100;
 };
 
 #endif  // CA_SA_H_

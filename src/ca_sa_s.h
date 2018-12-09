@@ -25,42 +25,33 @@
 
 #include "src/ca.h"
 
-class CASAS: public CA {
+class CASAS : public CA {
  public:
-   CASAS(int i_n
-            , int i_m
-            , int i_nres
-            , const std::vector<double>& v_b
-            , const std::vector<double>& v_a
-            , const boost::numeric::ublas::matrix<int>&    m_r
-            , const boost::numeric::ublas::matrix<int>&    m_s
-            );
-   ~CASAS();
-    void computeAllocation();
- private:
-    std::vector<int> bids;
-    std::vector<int> asks;
-    std::vector<int> z;   // same as x, but for sellers
-    double welfare = 0.;
-    
-    boost::numeric::ublas::matrix<int> _y;
-    std::vector<int> _x;
-    std::vector<int> _z;
-    double _welfare = 0.;
-    
-    boost::numeric::ublas::matrix<int> best_y;
-    std::vector<int> best_x;
-    double best_welfare = 0;
-
-    double ap;
-    double T = 1.0;
-    const double T_min = 0.00001;
-    const double alpha = 0.99;
+  CASAS(Instance instance_);
+  ~CASAS();
 
  private:
-    void generateInitialSolution();
-    void neighbor();
-    double acceptanceProbability();
+  void computeAllocation();
+  void resetAllocation();
+  void generateInitialSolution();
+  void neighbor();
+  double acceptanceProbability();
+
+  std::vector<int> z;  // same as x, but for sellers
+  double welfare = 0.;
+
+  // temporary vars
+  boost::numeric::ublas::matrix<int> _y;
+  std::vector<int> _x;
+  std::vector<int> _z;
+  double _welfare = 0.;
+
+  // SA-specific params
+  double ap;
+  double T = 1.0;
+  const double T_min = 0.00001;
+  const double alpha = 0.9;
+  const unsigned int niter = 100;
 };
 
 #endif  // CA_SA_S_H_
