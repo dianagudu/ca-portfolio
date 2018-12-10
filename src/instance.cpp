@@ -31,3 +31,15 @@ Instance::Instance(std::string filename) {
   asks = BidSet::fromYAML(inst["asks"]);
   assert(bids.L() == asks.L());
 }
+
+bool Instance::canAllocate(int bidder, int seller) {
+  // no allocation possible if bid value is less than the asked value
+  if (bids.V()[bidder] < asks.V()[seller]) return false;
+
+  // no allocation possible if requested quantities are not at least matched
+  for (unsigned int k = 0; k < L(); ++k)
+    if (bids.Q()(bidder, k) > asks.Q()(seller, k)) return false;
+
+  // all requirements are matched => bidder and seller _can_ trade
+  return true;
+}

@@ -68,7 +68,6 @@ bool CAHill1S::locallyImprove() {
 void CAHill1S::doGreedy() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
-  unsigned int l = instance.L();
 
   // reset allocation
   _y = boost::numeric::ublas::zero_matrix<int>(n, m);
@@ -79,14 +78,8 @@ void CAHill1S::doGreedy() {
   unsigned int j = 0;
   critical_j = 0;
   while (i < n && j < m) {
-    unsigned int k = 0;
-    while (k < l && instance.getBids().Q()(bid_index[i], k) <=
-                        instance.getAsks().Q()(ask_index[j], k)) {
-      ++k;
-    }
-    // seller j can allocate resources to bidder i
-    if (k == l && instance.getBids().V()[bid_index[i]] >=
-                      instance.getAsks().V()[ask_index[j]]) {
+    // seller ask_index[j] can allocate resources to bidder bid_index[i]
+    if (instance.canAllocate(bid_index[i], ask_index[j])) {
       _x[bid_index[i]] = 1;
       _y(bid_index[i], ask_index[j]) = 1;
       _welfare += instance.getBids().V()[bid_index[i]] -

@@ -34,7 +34,6 @@ void CAHill2::computeAllocation() {
 bool CAHill2::locallyImprove() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
-  unsigned int l = instance.L();
 
   // update vars
   _y = y;
@@ -50,14 +49,8 @@ bool CAHill2::locallyImprove() {
     while (j < m) {
       // check if seller j has already allocated its resources
       if (_z[ask_index[j]] == 0) {
-        unsigned int k = 0;
-        while (k < l && instance.getBids().Q()(i, k) <=
-                            instance.getAsks().Q()(ask_index[j], k)) {
-          ++k;
-        }
         // seller ask_index[j] can allocate resources to bidder i
-        if (k == l &&
-            instance.getBids().V()[i] >= instance.getAsks().V()[ask_index[j]]) {
+        if (instance.canAllocate(i, ask_index[j])) {
           _x[i] = 1;
           _y(i, ask_index[j]) = 1;
           _z[ask_index[j]] = 1;
@@ -88,7 +81,6 @@ bool CAHill2::locallyImprove() {
 void CAHill2::generateInitialSolution() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
-  unsigned int l = instance.L();
 
   // sort bids descendingly by density
   std::sort(bid_index.begin(), bid_index.end(),
@@ -105,14 +97,8 @@ void CAHill2::generateInitialSolution() {
   unsigned int i = 0;
   unsigned int j = 0;
   while (i < n && j < m) {
-    unsigned int k = 0;
-    while (k < l && instance.getBids().Q()(bid_index[i], k) <=
-                        instance.getAsks().Q()(ask_index[j], k)) {
-      ++k;
-    }
-    // seller j can allocate resources to bidder i
-    if (k == l && instance.getBids().V()[bid_index[i]] >=
-                      instance.getAsks().V()[ask_index[j]]) {
+    // seller ask_index[j] can allocate resources to bidder bid_index[i]
+    if (instance.canAllocate(bid_index[i], ask_index[j])) {
       x[bid_index[i]] = 1;
       z[ask_index[j]] = 1;
       y(bid_index[i], ask_index[j]) = 1;

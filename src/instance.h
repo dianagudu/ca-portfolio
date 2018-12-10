@@ -31,6 +31,8 @@ class Instance {
   Instance(std::string filename);  // creates instance from input file
   ~Instance(){};
 
+  bool canAllocate(int bidder, int seller);
+
   inline unsigned int L() { return bids.L(); }
   BidSet getBids() { return bids; }
   BidSet getAsks() { return asks; }
