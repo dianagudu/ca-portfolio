@@ -28,25 +28,26 @@ void CASAS::computeAllocation() {
   srand(time(NULL));
   generateInitialSolution();
 
-  while (T > T_min) {
+  double T = T_max;
+  bool frozen = false;
+  while (T > T_min && !frozen) {
+    frozen = true;
     for (unsigned int iter = 0; iter < niter; ++iter) {
       neighbor();
-      ap = acceptanceProbability();
-      if (ap > ((double)rand() / RAND_MAX)) {
+      if (acceptanceProbability(T) > ((double)rand() / RAND_MAX)) {
         x = _x;
         y = _y;
         z = _z;
         welfare = _welfare;
+        frozen = false;
       }
       T *= alpha;
     }
   }
 }
 
-double CASAS::acceptanceProbability() {
-  if (welfare == 0) return 2.;
-  double ap = exp((_welfare - welfare) / abs(welfare) / T);
-  return ap;
+double CASAS::acceptanceProbability(double T) {
+  return exp((_welfare - welfare) / T);
 }
 
 void CASAS::neighbor() {
@@ -115,6 +116,10 @@ void CASAS::generateInitialSolution() {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
 
+  // starting temperature is the maximum possible welfare increase
+  T_max = instance.getBids().V()[bid_index[0]] -
+          instance.getAsks().V()[ask_index[0]];
+
   // compute greedy1s solution
   unsigned int i = 0;
   unsigned int j = 0;
@@ -137,7 +142,6 @@ void CASAS::generateInitialSolution() {
     ++i;
   }
 }
-
 
 void CASAS::resetAllocation() {
   // reset variables if new allocation must be calculated

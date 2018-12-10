@@ -35,7 +35,7 @@ class CASA : public CA {
   void resetAllocation();
   void generateInitialSolution();
   void neighbor();
-  double acceptanceProbability();
+  double acceptanceProbability(double T);
 
   std::vector<int> z;  // same as x, but for sellers
   double welfare = 0.;
@@ -47,8 +47,7 @@ class CASA : public CA {
   double _welfare = 0.;
 
   // SA-specific params
-  double ap;
-  double T = 1.0;
+  double T_max = 1.0;
   const double T_min = 0.00001;
   const double alpha = 0.9;
   const unsigned int niter = 100;
