@@ -17,8 +17,8 @@
 
 #include "src/helper.h"
 
-#include <boost/program_options.hpp>
 #include <boost/optional.hpp>
+#include <boost/program_options.hpp>
 #include <iomanip>
 #include <iostream>
 
@@ -135,4 +135,12 @@ boost::optional<InputParams> parse(int argc, char* argv[]) {
     std::cerr << "Try '" << argv[0] << " --help' for more information." << std::endl;
     return {};
   }
+}
+
+bool isStochastic(AuctionType type) {
+  if (type == +AuctionType::HILL2 || type == +AuctionType::HILL2S ||
+      type == +AuctionType::SA || type == +AuctionType::SAS ||
+      type == +AuctionType::CASANOVA || type == +AuctionType::CASANOVAS)
+    return true;
+  return false;
 }

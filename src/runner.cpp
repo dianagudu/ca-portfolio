@@ -43,7 +43,6 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
 void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
                      std::string infile) {
   std::vector<AuctionType> algos;
-  int nruns = 1;
   switch (mode) {
     case RunMode::ALL:
       for (auto type : AuctionType::_values()) algos.push_back(type);
@@ -53,13 +52,6 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
         if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
           algos.push_back(type);
       break;
-    case RunMode::RANDOM:
-      algos.push_back(AuctionType::SA);
-      algos.push_back(AuctionType::SAS);
-      algos.push_back(AuctionType::CASANOVA);
-      algos.push_back(AuctionType::CASANOVAS);
-      nruns = 100;
-      break;
     case RunMode::SAMPLES:
       for (auto type : AuctionType::_values())
         if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
@@ -67,9 +59,11 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
       break;
   }
 
-  for (int run = 0; run < nruns; ++run) {
-    for (auto type : algos) {
-        Runner::runAlgo(instance, type, outfile, infile);
+  for (auto type : algos) {
+    unsigned int nruns = 1;
+    if (isStochastic(type)) nruns = 10;
+    for (unsigned int run = 0; run < nruns; ++run) {
+      Runner::runAlgo(instance, type, outfile, infile);
     }
   }
 }

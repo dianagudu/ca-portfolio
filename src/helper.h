@@ -48,8 +48,7 @@ BETTER_ENUM(AuctionType, int,
 BETTER_ENUM(RunMode, int,
   ALL = 0,
   HEURISTICS,
-  SAMPLES,
-  RANDOM
+  SAMPLES
 )
 
 constexpr const char* describe_algorithms(AuctionType type) {
@@ -77,7 +76,6 @@ constexpr const char* describe_run_modes(RunMode mode) {
     case RunMode::ALL: return "run all algorithms";
     case RunMode::HEURISTICS: return "run all heuristic algorithms (exclude CPLEX and RLPS from all)";
     case RunMode::SAMPLES: return "run all heuristic algorithms on instance and samples";
-    case RunMode::RANDOM: return "run all stochastic algorithms multiple times";
     default: return "invalid mode";
   }
 }
@@ -99,7 +97,13 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& v);
 void conflicting_options(const boost::program_options::variables_map& vm,
                          const char* opt1, const char* opt2);
 
+// prints program usage
 void usage(char* program_name, boost::program_options::options_description);
+
+// parses command line arguments
 boost::optional<InputParams> parse(int argc, char* argv[]);
+
+// whether an algorihtm is stochastic => will be run multiple times
+bool isStochastic(AuctionType type);
 
 #endif  // SRC_HELPER_H_
