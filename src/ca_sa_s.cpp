@@ -17,15 +17,18 @@
 
 #include "ca_sa_s.h"
 
-#include <random>
-
 CASAS::CASAS(Instance instance_)
-    : CA(instance_), z(instance_.getAsks().N(), 0) {}
+    : CA(instance_), z(instance_.getAsks().N(), 0),
+      distribution_neighbor(0, instance_.getAsks().N() - 1),
+      distribution_ap(0.0, 1.0) {}
 
 CASAS::~CASAS() {}
 
 void CASAS::computeAllocation() {
-  srand(time(NULL));
+  // seed mersenne_twister_engine with rd()
+  std::random_device rd;
+  generator.seed(rd());
+
   generateInitialSolution();
 
   double T = T_max;
@@ -34,7 +37,7 @@ void CASAS::computeAllocation() {
     frozen = true;
     for (unsigned int iter = 0; iter < niter; ++iter) {
       neighbor();
-      if (acceptanceProbability(T) > ((double)rand() / RAND_MAX)) {
+      if (acceptanceProbability(T) > distribution_ap(generator)) {
         x = _x;
         y = _y;
         z = _z;
@@ -52,7 +55,6 @@ double CASAS::acceptanceProbability(double T) {
 
 void CASAS::neighbor() {
   unsigned int n = instance.getBids().N();
-  unsigned int m = instance.getAsks().N();
 
   // update vars
   _y = y;
@@ -61,7 +63,7 @@ void CASAS::neighbor() {
   _welfare = welfare;
 
   // randomly select one ask
-  unsigned int j = rand() % m;
+  unsigned int j = distribution_neighbor(generator);
   if (_z[j]) {  // if z_j==1 set it to 0
     _welfare += instance.getAsks().V()[j];
     _z[j] = 0;
@@ -111,7 +113,7 @@ void CASAS::generateInitialSolution() {
   // starting temperature is the maximum possible welfare increase
   T_max = instance.getBids().V()[bid_index[0]] -
           instance.getAsks().V()[ask_index[0]];
-
+  return;
   // compute greedy1s solution
   unsigned int i = 0;
   unsigned int j = 0;

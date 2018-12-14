@@ -21,6 +21,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/unordered_map.hpp>
 
+#include <random>
 #include <vector>
 
 #include "src/ca.h"
@@ -47,6 +48,10 @@ class CAHill2S : public CA {
 
   // maximum number of neighbors
   unsigned int num_neighbors = 0;
+
+  // variables for random number generation
+  std::mt19937_64 generator;
+  std::uniform_int_distribution<> distribution_neighbor;
 };
 
 #endif  // CA_HILL2_S_H_

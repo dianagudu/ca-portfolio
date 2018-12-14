@@ -21,6 +21,7 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/unordered_map.hpp>
 
+#include <random>
 #include <vector>
 
 #include "src/ca.h"
@@ -51,6 +52,11 @@ class CASAS : public CA {
   const double T_min = 0.00001;
   const double alpha = 0.9;
   const unsigned int niter = 100;
+
+  // variables for random number generation
+  std::mt19937_64 generator;
+  std::uniform_int_distribution<> distribution_neighbor;
+  std::uniform_real_distribution<> distribution_ap;
 };
 
 #endif  // CA_SA_S_H_

@@ -17,15 +17,18 @@
 
 #include "ca_hill2_s.h"
 
-#include <random>
-
 CAHill2S::CAHill2S(Instance instance_)
-    : CA(instance_), z(instance_.getAsks().N(), 0) {}
+    : CA(instance_),
+      z(instance_.getAsks().N(), 0),
+      distribution_neighbor(0, instance_.getAsks().N() - 1) {}
 
 CAHill2S::~CAHill2S() {}
 
 void CAHill2S::computeAllocation() {
-  srand(time(NULL));
+  // seed mersenne_twister_engine with rd()
+  std::random_device rd;
+  generator.seed(rd());
+
   generateInitialSolution();
   while (locallyImprove())
     ;
@@ -44,7 +47,7 @@ bool CAHill2S::locallyImprove() {
   _welfare = welfare;
 
   // randomly select one ask
-  unsigned int j = rand() % m;
+  unsigned int j = distribution_neighbor(generator);
   if (_z[j] == 0) {
     // if z_j==0, try to find a bid to match from sorted bids
     unsigned int i = 0;
@@ -93,7 +96,7 @@ void CAHill2S::generateInitialSolution() {
             [this](unsigned int i, unsigned int j) -> bool {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
-
+  return;
   // compute greedy1s solution
   unsigned int i = 0;
   unsigned int j = 0;
