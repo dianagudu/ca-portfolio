@@ -121,6 +121,8 @@ void CAHill2S::resetAllocation() {
   y = boost::numeric::ublas::zero_matrix<int>(instance.getBids().N(),
                                               instance.getAsks().N());
 
+  bid_index = std::vector<int>();
+  ask_index = std::vector<int>();
   for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
     bid_index.push_back(i);
   }

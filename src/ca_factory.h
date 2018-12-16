@@ -56,12 +56,10 @@ class CAFactory {
         return new CASA(instance);
       case AuctionType::SAS:
         return new CASAS(instance);
-      case AuctionType::CASANOVA:
+      // case AuctionType::CASANOVA:
         // return new CACasanova(instance);
-        break;
-      case AuctionType::CASANOVAS:
+      // case AuctionType::CASANOVAS:
         // return new CACasanovaS(instance);
-        break;
 #ifdef _CPLEX
       case AuctionType::CPLEX:
         return new CACplex(instance);

@@ -28,10 +28,14 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
                      std::string infile) {
   try {
     CA* ca = CAFactory::createAuction(instance, type);
-    ca->run();
-    // ca->printResults(type._to_string());
-    auto stats = ca->getStats();
-    writeStats(stats, type, outfile, infile);
+    unsigned int nruns = 1;
+    if (isStochastic(type)) nruns = 10;
+    for (unsigned int run = 0; run < nruns; ++run) {
+      ca->run();
+      // ca->printResults(type._to_string());
+      auto stats = ca->getStats();
+      writeStats(stats, type, outfile, infile);
+    }
     delete ca;
   } catch (std::invalid_argument& e) {
     std::cerr << "[WARNING] " << e.what() << std::endl;
@@ -60,11 +64,7 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
   }
 
   for (auto type : algos) {
-    unsigned int nruns = 1;
-    if (isStochastic(type)) nruns = 10;
-    for (unsigned int run = 0; run < nruns; ++run) {
-      Runner::runAlgo(instance, type, outfile, infile);
-    }
+    Runner::runAlgo(instance, type, outfile, infile);
   }
 }
 
