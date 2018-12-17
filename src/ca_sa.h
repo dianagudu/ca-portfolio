@@ -30,10 +30,12 @@ class CASA : public CA {
  public:
   CASA(Instance instance_);
   ~CASA();
+  
+  bool noSideEffects();
+  void resetAllocation();
 
  private:
   void computeAllocation();
-  void resetAllocation();
   void generateInitialSolution();
   void neighbor();
   double acceptanceProbability(double T);

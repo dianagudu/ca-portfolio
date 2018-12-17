@@ -30,10 +30,12 @@ class CAHill2 : public CA {
  public:
   CAHill2(Instance instance_);
   ~CAHill2();
+
+  bool noSideEffects();
+  void resetAllocation();
   
  private:
   void computeAllocation();
-  void resetAllocation();
   void generateInitialSolution();
   bool locallyImprove();
 

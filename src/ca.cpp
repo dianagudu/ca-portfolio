@@ -31,8 +31,7 @@ CA::CA(Instance _instance)
       tmp_bids(BidSetAux(instance.getBids())),
       tmp_asks(BidSetAux(instance.getAsks())),
       x(_instance.getBids().N(), 0),
-      y(_instance.getBids().N(), _instance.getAsks().N()) {
-}
+      y(_instance.getBids().N(), _instance.getAsks().N()) {}
 
 CA::CA(Instance _instance, RelevanceMode mode)
     : instance(_instance),
@@ -83,7 +82,11 @@ void CA::run() {
   stats.setTimeWdp(usec / 1000.);
 }
 
-void CA::resetAllocation() {
+void CA::resetAllocation() { resetBase(); }
+
+bool CA::noSideEffects() { return noSideEffectsBase(); }
+
+void CA::resetBase() {
   // reset variables if new allocation must be calculated
   x = std::vector<int>(instance.getBids().N(), 0);
   y = boost::numeric::ublas::zero_matrix<int>(instance.getBids().N(),
@@ -105,6 +108,28 @@ void CA::resetAllocation() {
   for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
     price_seller[j] = 0.;
   }
+
+  stats = Stats();
+}
+
+bool CA::noSideEffectsBase() {
+  for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
+    if (x[i]) return false;
+    if (price_buyer[i]) return false;
+    for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
+      if (y(i, j)) return false;
+      if (price_seller[j]) return false;
+    }
+  }
+  if (!std::is_sorted(bid_index.begin(), bid_index.end())) return false;
+  if (!std::is_sorted(ask_index.begin(), ask_index.end())) return false;
+
+  if (stats.getAvgUnitPrice() || stats.getMeanUtility() ||
+      stats.getNumGoodsTraded() || stats.getNumWinners() ||
+      stats.getStddevUtility() || stats.getTimeWdp() || stats.getWelfare())
+    return false;
+
+  return true;
 }
 
 void CA::computeKPricing(double kappa) {

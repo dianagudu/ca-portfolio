@@ -118,6 +118,7 @@ void CASA::generateInitialSolution() {
   // compute greedy1 solution
   unsigned int i = 0;
   unsigned int j = 0;
+  welfare = 0.;
   while (i < n && j < m) {
     // seller ask_index[j] can allocate resources to bidder bid_index[i]
     if (instance.canAllocate(bid_index[i], ask_index[j])) {
@@ -133,26 +134,14 @@ void CASA::generateInitialSolution() {
 }
 
 void CASA::resetAllocation() {
-  // reset variables if new allocation must be calculated
-  x = std::vector<int>(instance.getBids().N(), 0);
+  resetBase();
+  welfare = 0.;
   z = std::vector<int>(instance.getAsks().N(), 0);
-  y = boost::numeric::ublas::zero_matrix<int>(instance.getBids().N(),
-                                              instance.getAsks().N());
+}
 
-  bid_index = std::vector<int>();
-  ask_index = std::vector<int>();
-  for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
-    bid_index.push_back(i);
-  }
-  for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
-    ask_index.push_back(j);
-  }
-
-  // initialise all prices to 0
-  for (unsigned int i = 0; i < instance.getBids().N(); ++i) {
-    price_buyer[i] = 0.;
-  }
-  for (unsigned int j = 0; j < instance.getAsks().N(); ++j) {
-    price_seller[j] = 0.;
-  }
+bool CASA::noSideEffects() {
+  if (welfare) return false;
+  for (unsigned int j = 0; j < instance.getAsks().N(); ++j)
+    if (z[j]) return false;
+  return noSideEffectsBase();
 }

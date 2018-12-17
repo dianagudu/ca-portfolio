@@ -63,13 +63,16 @@ class CA {
 
   void run();
   void printResults(std::string mechanism_name);
+  virtual void resetAllocation();  // can be overwritten to reset all tmp vars
+  virtual bool noSideEffects();
 
  protected:
   void computeStatistics();
   virtual void computeAllocation() = 0;  // WDP to be overwritten for each
                                          // implemented mechanism
-  virtual void resetAllocation();  // can be overwritten to reset all tmp vars
   virtual void computeKPricing(double kappa);
+  void resetBase();
+  bool noSideEffectsBase();
 };
 
 #endif  // SRC_CA_H_
