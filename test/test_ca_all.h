@@ -99,6 +99,11 @@ class TestCASAS : public TestCA {
   TestCASAS();
 };
 
+class TestCACasanova : public TestCA {
+ public:
+  TestCACasanova();
+};
+
 class TestCACplex : public TestCA {
  public:
   TestCACplex();
