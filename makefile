@@ -21,7 +21,7 @@ RM=rm -rf
 LDLIBS=-lstdc++ -lm ${BOOST_LIB} ${YAML_LIB}
 LDFLAGS=-L/usr/local/lib ${BOOST_LIBDIR} ${YAML_LIBDIR}
 CXXFLAGS=-I. ${BOOST_INCLUDE} ${YAML_INCLUDE}
-CXX=g++ -std=c++17 -DIL_STD -Wall -g #
+CXX=g++ -std=c++17 -DIL_STD -Wall -g -Wno-ignored-attributes#
 
 # to use the CPLEX libs, compile with CPLEX=true
 ifdef CPLEX
