@@ -28,6 +28,10 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
                      std::string infile) {
   try {
     CA* ca = CAFactory::createAuction(instance, type);
+    if (!ca)
+      throw std::invalid_argument(
+          std::string("Something went wrong when creating auction of type ") +
+          type._to_string());
     unsigned int nruns = 1;
     if (isStochastic(type)) nruns = 10;
     for (unsigned int run = 0; run < nruns; ++run) {

@@ -104,4 +104,9 @@ class TestCACplex : public TestCA {
   TestCACplex();
 };
 
+class TestCACplexRLPS : public TestCA {
+ public:
+  TestCACplexRLPS();
+};
+
 #endif  // TEST_TEST_CA_GENERIC_H_

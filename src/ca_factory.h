@@ -19,7 +19,6 @@
 #define SRC_CA_FACTORY_H_
 
 #include "src/ca.h"
-#include "src/ca_cplex.h"
 #include "src/ca_greedy1.h"
 #include "src/ca_greedy1_s.h"
 #include "src/ca_greedy2.h"
@@ -31,6 +30,11 @@
 #include "src/ca_sa.h"
 #include "src/ca_sa_s.h"
 #include "src/helper.h"
+
+#ifdef _CPLEX
+#include "src/ca_cplex.h"
+#include "src/ca_cplex_rlps.h"
+#endif
 
 class CAFactory {
  public:
@@ -56,15 +60,15 @@ class CAFactory {
         return new CASA(instance);
       case AuctionType::SAS:
         return new CASAS(instance);
-      // case AuctionType::CASANOVA:
+        // case AuctionType::CASANOVA:
         // return new CACasanova(instance);
-      // case AuctionType::CASANOVAS:
+        // case AuctionType::CASANOVAS:
         // return new CACasanovaS(instance);
 #ifdef _CPLEX
       case AuctionType::CPLEX:
         return new CACplex(instance);
       case AuctionType::RLPS:
-        // return new CARlps(instance);
+        return new CACplexRLPS(instance);
 #endif
       default:
         throw std::invalid_argument(std::string(type._to_string()) +
