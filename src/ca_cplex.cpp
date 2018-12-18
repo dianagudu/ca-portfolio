@@ -42,8 +42,8 @@ void CACplex::computeAllocation() {
     // stop when solution is within 10% of the optimal value
     // cplex.setParam(IloCplex::EpGap, 0.1);
     // cplex.setParam(IloCplex::TiLim, 120);
-    // emphasize feasability over optimality
-    cplex.setParam(IloCplex::Param::Emphasis::MIP, 1);
+    // emphasize optimality
+    cplex.setParam(IloCplex::Param::Emphasis::MIP, 2);
     // solve the model
     cplex.solve();
     // get status and solution value
