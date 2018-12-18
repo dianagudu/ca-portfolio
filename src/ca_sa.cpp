@@ -114,7 +114,7 @@ void CASA::generateInitialSolution() {
   // starting temperature is the maximum possible welfare increase
   T_max = instance.getBids().V()[bid_index[0]] -
           instance.getAsks().V()[ask_index[0]];
-  return;
+  //return;
   // compute greedy1 solution
   unsigned int i = 0;
   unsigned int j = 0;

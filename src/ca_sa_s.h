@@ -50,10 +50,10 @@ class CASAS : public CA {
   double _welfare = 0.;
 
   // SA-specific params
-  double T_max = 1.0;
+  double T_max;
   const double T_min = 0.00001;
   const double alpha = 0.9;
-  const unsigned int niter = 100;
+  const unsigned int niter = 10;
 
   // variables for random number generation
   std::mt19937_64 generator;
