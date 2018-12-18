@@ -39,9 +39,9 @@ void CACplexRLPS::computeAllocation() {
     // turn output off
     cplex.setOut(env.getNullStream());
     // stop when solution is within some % of the optimal value
-    cplex.setParam(IloCplex::EpGap, 0.05);
-    // emphasize feasability over optimality
-    // cplex.setParam(IloCplex::Param::Emphasis::MIP, 1);
+    // cplex.setParam(IloCplex::EpGap, 0.05);
+    // emphasize optimality
+    // cplex.setParam(IloCplex::Param::Emphasis::MIP, 2);
     // cplex.setParam(IloCplex::Param::RootAlgorithm, IloCplex::Dual);
     // solve the model
     cplex.solve();
@@ -162,9 +162,9 @@ void CACplexRLPS::populateByRow(IloModel model, IloNumVarArray var,
   for (unsigned int i = 0; i < n; ++i) {
     for (unsigned int k = 0; k < l; ++k) {
       IloExpr constr3 = IloExpr(env);
-      constr3 += int(instance.getBids().Q()(i, k)) * var[i];
+      constr3 += double(instance.getBids().Q()(i, k)) * var[i];
       for (unsigned int j = 0; j < m; ++j) {
-        constr3 -= int(instance.getAsks().Q()(j, k)) * var[n + i * m + j];
+        constr3 -= double(instance.getAsks().Q()(j, k)) * var[n + i * m + j];
       }
       c.add(constr3 <= 0);
       c[nc].setName((std::string("q") + std::to_string(i) + std::string("_") +
