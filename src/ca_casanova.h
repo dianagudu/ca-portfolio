@@ -36,6 +36,7 @@ class CACasanova : public CA {
 
  private:
   void computeAllocation();
+  void resetBetweenTries();
   inline int age(unsigned int i);
   void insert(unsigned int i);
 
