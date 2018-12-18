@@ -104,6 +104,11 @@ class TestCACasanova : public TestCA {
   TestCACasanova();
 };
 
+class TestCACasanovaS : public TestCA {
+ public:
+  TestCACasanovaS();
+};
+
 class TestCACplex : public TestCA {
  public:
   TestCACplex();

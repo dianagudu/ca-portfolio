@@ -19,6 +19,8 @@
 #define SRC_CA_FACTORY_H_
 
 #include "src/ca.h"
+#include "src/ca_casanova.h"
+#include "src/ca_casanova_s.h"
 #include "src/ca_greedy1.h"
 #include "src/ca_greedy1_s.h"
 #include "src/ca_greedy2.h"
@@ -29,7 +31,6 @@
 #include "src/ca_hill2_s.h"
 #include "src/ca_sa.h"
 #include "src/ca_sa_s.h"
-#include "src/ca_casanova.h"
 #include "src/helper.h"
 
 #ifdef _CPLEX
@@ -63,8 +64,8 @@ class CAFactory {
         return new CASAS(instance);
       case AuctionType::CASANOVA:
         return new CACasanova(instance);
-        // case AuctionType::CASANOVAS:
-        // return new CACasanovaS(instance);
+      case AuctionType::CASANOVAS:
+        return new CACasanovaS(instance);
 #ifdef _CPLEX
       case AuctionType::CPLEX:
         return new CACplex(instance);

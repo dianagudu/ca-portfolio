@@ -28,6 +28,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION(TestCAStochastic<TestCAHill2S>);
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCAStochastic<TestCASA>);
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCAStochastic<TestCASAS>);
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCAStochastic<TestCACasanova>);
+CPPUNIT_TEST_SUITE_REGISTRATION(TestCAStochastic<TestCACasanovaS>);
 #ifdef _CPLEX
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCAGeneric<TestCACplex>);
 CPPUNIT_TEST_SUITE_REGISTRATION(TestCAGeneric<TestCACplexRLPS>);
@@ -44,5 +45,6 @@ TestCAHill2S::TestCAHill2S() { type = AuctionType::HILL2S; }
 TestCASA::TestCASA() { type = AuctionType::SA; }
 TestCASAS::TestCASAS() { type = AuctionType::SAS; }
 TestCACasanova::TestCACasanova() { type = AuctionType::CASANOVA; }
+TestCACasanovaS::TestCACasanovaS() { type = AuctionType::CASANOVAS; }
 TestCACplex::TestCACplex() { type = AuctionType::CPLEX; }
 TestCACplexRLPS::TestCACplexRLPS() { type = AuctionType::RLPS; }
