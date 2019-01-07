@@ -28,7 +28,7 @@ CACasanova::CACasanova(Instance instance_)
   for (unsigned int j = 0; j < instance.getAsks().N(); ++j)
     asks_sorted.push_back(j);
   // sort asks ascendingly by density
-  std::sort(ask_index.begin(), ask_index.end(),
+  std::sort(asks_sorted.begin(), asks_sorted.end(),
             [this](unsigned int i, unsigned int j) -> bool {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
@@ -95,6 +95,7 @@ void CACasanova::insert(unsigned int i) {
     }
     ++j;
   }
+  return;
   // if no seller could be found, look for one that has already allocated
   // its bundle, but would gain more by switching to this bidder
   j = 0;

@@ -77,21 +77,16 @@ void CASAS::neighbor() {
       }
     }
   } else {  // z_j==0, try to find a match in the sorted bids
-    unsigned int i = 0;
-    while (i < n) {
-      // check if seller j has already allocated its resources
-      if (_x[bid_index[i]] == 0) {
-        // seller j can allocate resources to bidder bid_index[i]
-        if (instance.canAllocate(bid_index[i], j)) {
-          _x[bid_index[i]] = 1;
-          _y(bid_index[i], j) = 1;
-          _z[j] = 1;
-          _welfare +=
-              instance.getBids().V()[bid_index[i]] - instance.getAsks().V()[j];
-          break;
-        }
+    for (unsigned int i = 0; i < n; ++i) {
+      // check if seller j can allocate resources to bidder bid_index[i]
+      if (!_x[bid_index[i]] && instance.canAllocate(bid_index[i], j)) {
+        _x[bid_index[i]] = 1;
+        _y(bid_index[i], j) = 1;
+        _z[j] = 1;
+        _welfare +=
+            instance.getBids().V()[bid_index[i]] - instance.getAsks().V()[j];
+        break;
       }
-      ++i;
     }
   }
 }

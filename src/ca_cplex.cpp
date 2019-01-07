@@ -17,10 +17,6 @@
 
 #include "ca_cplex.h"
 
-#include <iostream>
-#include <random>
-#include <string>
-
 CACplex::CACplex(Instance instance_) : CA(instance_) {}
 
 CACplex::~CACplex() {}
@@ -39,18 +35,10 @@ void CACplex::computeAllocation() {
     IloCplex cplex(model);
     // turn output off
     cplex.setOut(env.getNullStream());
-    // stop when solution is within 10% of the optimal value
-    // cplex.setParam(IloCplex::EpGap, 0.1);
-    // cplex.setParam(IloCplex::TiLim, 120);
     // emphasize optimality
     cplex.setParam(IloCplex::Param::Emphasis::MIP, 2);
     // solve the model
     cplex.solve();
-    // get status and solution value
-    // env.out() << "Solution status = " << cplex.getStatus() << std::endl;
-    // env.out() << "Solution value  = " << cplex.getObjValue() << std::endl;
-    // write model to file
-    // cplex.exportModel("ca.cplex.mip.lp");
     // get values for optimal allocation
     IloNumArray vals(env);
     cplex.getValues(vals, var);

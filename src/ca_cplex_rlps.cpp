@@ -17,8 +17,6 @@
 
 #include "ca_cplex_rlps.h"
 
-#include <boost/numeric/ublas/io.hpp>
-
 CACplexRLPS::CACplexRLPS(Instance instance_) : CA(instance_) {}
 
 CACplexRLPS::~CACplexRLPS() {}
@@ -38,11 +36,7 @@ void CACplexRLPS::computeAllocation() {
     IloCplex cplex(model);
     // turn output off
     cplex.setOut(env.getNullStream());
-    // stop when solution is within some % of the optimal value
-    // cplex.setParam(IloCplex::EpGap, 0.05);
-    // emphasize optimality
-    // cplex.setParam(IloCplex::Param::Emphasis::MIP, 2);
-    // cplex.setParam(IloCplex::Param::RootAlgorithm, IloCplex::Dual);
+    cplex.setParam(IloCplex::Param::RootAlgorithm, IloCplex::Primal);
     // solve the model
     cplex.solve();
     // get values for optimal allocation
