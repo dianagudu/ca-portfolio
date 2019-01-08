@@ -107,9 +107,13 @@ void CASAS::generateInitialSolution() {
             });
 
   // starting temperature is the maximum possible welfare increase
-  T_max = instance.getBids().V()[bid_index[0]] -
-          instance.getAsks().V()[ask_index[0]];
-  //return;
+  // T_max = instance.getBids().V()[bid_index[0]] -
+  //         instance.getAsks().V()[ask_index[0]];
+  auto bid_values = instance.getBids().V();
+  auto ask_values = instance.getAsks().V();
+  T_max = *(std::max_element(bid_values.begin(), bid_values.end())) -
+          *(std::min_element(ask_values.begin(), ask_values.end()));
+  // return;
   // compute greedy1s solution
   unsigned int i = 0;
   unsigned int j = 0;
