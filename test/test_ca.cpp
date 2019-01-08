@@ -113,7 +113,7 @@ void TestCA::testDeterministic(void) {
 
 void TestCA::setUp(void) {
   // init instance
-  instance = new Instance("/tmp/dataset1");
+  instance = new Instance("test/test_dataset");
   n = instance->getBids().N();
   m = instance->getAsks().N();
   l = instance->L();
