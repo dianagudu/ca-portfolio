@@ -21,8 +21,8 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include <boost/unordered_map.hpp>
 
-#include <vector>
 #include <random>
+#include <vector>
 
 #include "src/ca.h"
 
@@ -30,7 +30,7 @@ class CACasanova : public CA {
  public:
   CACasanova(Instance instance_);
   ~CACasanova();
-  
+
   bool noSideEffects();
   void resetAllocation();
 
@@ -41,6 +41,7 @@ class CACasanova : public CA {
   void insert(unsigned int i);
 
   std::vector<int> z;
+  std::vector<int> bids_sorted;
   std::vector<int> asks_sorted;
   double welfare = 0.;
 
@@ -51,6 +52,11 @@ class CACasanova : public CA {
   const double wp = 0.15;  // walk probability
   const double np = 0.5;   // novelty probability
   const unsigned int maxTries = 10;
+
+  // soft restart strategy: if at least theta steps have occured since reinit,
+  // but no improvement within the last theta/2 steps
+  unsigned int theta;
+  unsigned int last_improved_era;
 
   // variables for random number generation
   std::mt19937_64 generator;

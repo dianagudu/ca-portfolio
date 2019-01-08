@@ -30,7 +30,7 @@ class CACasanovaS : public CA {
  public:
   CACasanovaS(Instance instance_);
   ~CACasanovaS();
-  
+
   bool noSideEffects();
   void resetAllocation();
 
@@ -42,6 +42,7 @@ class CACasanovaS : public CA {
 
   std::vector<int> z;
   std::vector<int> bids_sorted;
+  std::vector<int> asks_sorted;
   double welfare = 0.;
 
   boost::unordered_map<int, int> birthday;
@@ -51,6 +52,11 @@ class CACasanovaS : public CA {
   const double wp = 0.15;  // walk probability
   const double np = 0.5;   // novelty probability
   const unsigned int maxTries = 10;
+
+  // soft restart strategy: if at least theta steps have occured since reinit,
+  // but no improvement within the last theta/2 steps
+  unsigned int theta;
+  unsigned int last_improved_era;
 
   // variables for random number generation
   std::mt19937_64 generator;
