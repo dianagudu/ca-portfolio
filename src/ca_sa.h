@@ -47,7 +47,7 @@ class CASA : public CA {
   double T_max;
   const double T_min = 0.00001;
   const double alpha = 0.9;
-  const unsigned int niter = 20;
+  const unsigned int niter = 100;
 
   // variables for random number generation
   std::mt19937_64 generator;

@@ -38,12 +38,14 @@ void CASAS::computeAllocation() {
   while (T > T_min && !frozen) {
     frozen = true;
     for (unsigned int iter = 0; iter < niter; ++iter) {
-      neighbor();
-      if (acceptanceProbability(T) > distribution_ap(generator)) {
-        x = _x;
-        y = _y;
-        z = _z;
-        welfare = _welfare;
+      Neighbor neigh = neighbor();
+      if (neigh.found && acceptanceProbability(neigh.welfare, T) >
+                             distribution_ap(generator)) {
+        welfare = neigh.welfare;
+        // flip neighbor bid and ask
+        x[neigh.bid] = 1 - x[neigh.bid];
+        z[neigh.ask] = 1 - z[neigh.ask];
+        y(neigh.bid, neigh.ask) = 1 - y(neigh.bid, neigh.ask);
         frozen = false;
         num_frozen_temps = 0;
       }
@@ -55,45 +57,46 @@ void CASAS::computeAllocation() {
   }
 }
 
-double CASAS::acceptanceProbability(double T) {
-  return exp((_welfare - welfare) / T);
+double CASAS::acceptanceProbability(double new_welfare, double T) {
+  return exp((new_welfare - welfare) / T);
 }
 
-void CASAS::neighbor() {
+Neighbor CASAS::neighbor() {
   unsigned int n = instance.getBids().N();
 
-  // update vars
-  _y = y;
-  _x = x;
-  _z = z;
-  _welfare = welfare;
+  // compute welfare difference and find which bid and ask have to be flipped
+  // change x, y, z only if solution is accepted
+  Neighbor neigh;
+  neigh.welfare = welfare;
+  neigh.found = false;
 
   // randomly select one ask
   unsigned int j = distribution_neighbor(generator);
-  if (_z[j]) {  // if z_j==1 set it to 0
-    _welfare += instance.getAsks().V()[j];
-    _z[j] = 0;
+  if (z[j]) {  // if z_j==1 set it to 0
+    neigh.welfare += instance.getAsks().V()[j];
     for (unsigned int i = 0; i < n; ++i) {
-      if (_y(i, j)) {
-        _welfare -= instance.getBids().V()[i];
-        _y(i, j) = 0;
-        _x[i] = 0;
+      if (y(i, j)) {
+        neigh.welfare -= instance.getBids().V()[i];
+        neigh.bid = i;
+        neigh.ask = j;
+        neigh.found = true;
         break;
       }
     }
   } else {  // z_j==0, try to find a match in the sorted bids
     for (unsigned int i = 0; i < n; ++i) {
       // check if seller j can allocate resources to bidder bid_index[i]
-      if (!_x[bid_index[i]] && instance.canAllocate(bid_index[i], j)) {
-        _x[bid_index[i]] = 1;
-        _y(bid_index[i], j) = 1;
-        _z[j] = 1;
-        _welfare +=
+      if (!x[bid_index[i]] && instance.canAllocate(bid_index[i], j)) {
+        neigh.welfare +=
             instance.getBids().V()[bid_index[i]] - instance.getAsks().V()[j];
+        neigh.bid = bid_index[i];
+        neigh.ask = j;
+        neigh.found = true;
         break;
       }
     }
   }
+  return neigh;
 }
 
 void CASAS::generateInitialSolution() {

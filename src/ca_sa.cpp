@@ -63,9 +63,9 @@ double CASA::acceptanceProbability(double new_welfare, double T) {
 
 Neighbor CASA::neighbor() {
   unsigned int m = instance.getAsks().N();
-  // TODO: change x, y, z only if solution is accepted
-  // how: compute welfare difference and find which bid and ask have to be
-  // flipped
+
+  // compute welfare difference and find which bid and ask have to be flipped
+  // change x, y, z only if solution is accepted
   Neighbor neigh;
   neigh.welfare = welfare;
   neigh.found = false;
