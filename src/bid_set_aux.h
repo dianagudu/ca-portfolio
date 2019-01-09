@@ -34,8 +34,8 @@ class BidSetAux {
   BidSetAux(BidSet bidset);
   BidSetAux(BidSet bidset, std::vector<double> _f);
 
-  inline const boost::unordered_map<unsigned int, double> &getDensity() { return density; }
-  inline const boost::unordered_map<unsigned int, double> &getAvgPrice() { return avg_price; }
+  inline boost::unordered_map<unsigned int, double> &getDensity() { return density; }
+  inline boost::unordered_map<unsigned int, double> &getAvgPrice() { return avg_price; }
 };
 
 #endif  // SRC_BID_SET_AUX_H_

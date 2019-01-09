@@ -91,6 +91,13 @@ typedef struct _InputParams_ {
     std::vector<std::string> infiles;
 } InputParams;
 
+typedef struct _Neighbor_ {
+    unsigned int bid;
+    unsigned int ask;
+    double welfare;
+    bool found;
+} Neighbor;
+
 template <typename T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T>& v);
 

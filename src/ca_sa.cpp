@@ -38,12 +38,14 @@ void CASA::computeAllocation() {
   while (T > T_min && !frozen) {
     frozen = true;
     for (unsigned int iter = 0; iter < niter; ++iter) {
-      neighbor();
-      if (acceptanceProbability(T) > distribution_ap(generator)) {
-        x = _x;
-        y = _y;
-        z = _z;
-        welfare = _welfare;
+      Neighbor neigh = neighbor();
+      if (neigh.found && acceptanceProbability(neigh.welfare, T) >
+                             distribution_ap(generator)) {
+        welfare = neigh.welfare;
+        // flip neighbor bid and ask
+        x[neigh.bid] = 1 - x[neigh.bid];
+        z[neigh.ask] = 1 - z[neigh.ask];
+        y(neigh.bid, neigh.ask) = 1 - y(neigh.bid, neigh.ask);
         frozen = false;
         num_frozen_temps = 0;
       }
@@ -55,46 +57,46 @@ void CASA::computeAllocation() {
   }
 }
 
-double CASA::acceptanceProbability(double T) {
-  return exp((_welfare - welfare) / T);
+double CASA::acceptanceProbability(double new_welfare, double T) {
+  return exp((new_welfare - welfare) / T);
 }
 
-void CASA::neighbor() {
+Neighbor CASA::neighbor() {
   unsigned int m = instance.getAsks().N();
-// TODO: change x, y, z only if solution is accepted
-// how: compute welfare difference and find which bid and ask have to be flipped
-  // update vars
-  _y = y;
-  _x = x;
-  _z = z;
-  _welfare = welfare;
+  // TODO: change x, y, z only if solution is accepted
+  // how: compute welfare difference and find which bid and ask have to be
+  // flipped
+  Neighbor neigh;
+  neigh.welfare = welfare;
+  neigh.found = false;
 
   // randomly select one bid
   unsigned int i = distribution_neighbor(generator);
-  if (_x[i]) {  // if x_i==1 set it to 0
-    _welfare -= instance.getBids().V()[i];
-    _x[i] = 0;
+  if (x[i]) {  // if x_i==1 set it to 0
+    neigh.welfare -= instance.getBids().V()[i];
     for (unsigned int j = 0; j < m; ++j) {
-      if (_y(i, j)) {
-        _welfare += instance.getAsks().V()[j];
-        _y(i, j) = 0;
-        _z[j] = 0;
+      if (y(i, j)) {
+        neigh.welfare += instance.getAsks().V()[j];
+        neigh.bid = i;
+        neigh.ask = j;
+        neigh.found = true;
         break;
       }
     }
   } else {  // x_i==0, try to find an ask to match from sorted asks
     for (unsigned int j = 0; j < m; ++j) {
       // check if seller ask_index[j] can allocate resources to bidder i
-      if (!_z[ask_index[j]] && instance.canAllocate(i, ask_index[j])) {
-        _x[i] = 1;
-        _y(i, ask_index[j]) = 1;
-        _z[ask_index[j]] = 1;
-        _welfare +=
+      if (!z[ask_index[j]] && instance.canAllocate(i, ask_index[j])) {
+        neigh.welfare +=
             instance.getBids().V()[i] - instance.getAsks().V()[ask_index[j]];
+        neigh.bid = i;
+        neigh.ask = ask_index[j];
+        neigh.found = true;
         break;
       }
     }
   }
+  return neigh;
 }
 
 void CASA::generateInitialSolution() {
@@ -103,17 +105,17 @@ void CASA::generateInitialSolution() {
 
   // sort bids descendingly by density
   std::sort(bid_index.begin(), bid_index.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_bids.getDensity()[i] > tmp_bids.getDensity()[j];
             });
   // sort asks ascendingly by density
   std::sort(ask_index.begin(), ask_index.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
 
-  // starting temperature is the maximum possible welfare increase TODO: is this correct?
-  // T_max = instance.getBids().V()[bid_index[0]] -
+  // starting temperature is the maximum possible welfare increase TODO: is this
+  // correct? T_max = instance.getBids().V()[bid_index[0]] -
   //         instance.getAsks().V()[ask_index[0]];
   auto bid_values = instance.getBids().V();
   auto ask_values = instance.getAsks().V();

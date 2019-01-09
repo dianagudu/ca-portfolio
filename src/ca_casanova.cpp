@@ -28,9 +28,9 @@ CACasanova::CACasanova(Instance instance_)
   // init sorted bids
   for (unsigned int i = 0; i < instance.getBids().N(); ++i)
     bids_sorted.push_back(i);
-  // sort bids descendingly by score / avg price
+  // sort bids descendingly by score (average price)
   std::sort(bids_sorted.begin(), bids_sorted.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_bids.getAvgPrice()[i] > tmp_bids.getAvgPrice()[j];
             });
   // init sorted asks
@@ -38,7 +38,7 @@ CACasanova::CACasanova(Instance instance_)
     asks_sorted.push_back(j);
   // sort asks ascendingly by density
   std::sort(asks_sorted.begin(), asks_sorted.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
 }
@@ -107,7 +107,7 @@ void CACasanova::insert(unsigned int i) {
     }
     ++j;
   }
-  // return;
+  //return;
   // if no seller could be found, look for one that has already allocated
   // its bundle, but would gain more by switching to this bidder
   j = 0;
@@ -135,8 +135,9 @@ void CACasanova::insert(unsigned int i) {
         // insert alloc_i in bid_index (unallocated bids) in the right place
         // according to average price
         unsigned int index = 0;
-        while (index < bid_index.size() && tmp_bids.getAvgPrice()[bid_index[index]] >
-                                               tmp_bids.getAvgPrice()[alloc_i])
+        while (index < bid_index.size() &&
+               tmp_bids.getAvgPrice()[bid_index[index]] >
+                   tmp_bids.getAvgPrice()[alloc_i])
           ++index;
         bid_index.insert(bid_index.begin() + index, alloc_i);
         return;
@@ -164,7 +165,7 @@ void CACasanova::resetBetweenTries() {
   }
 
   stats = Stats();
-  
+
   // reset birthdays
   for (unsigned int i = 0; i < instance.getBids().N(); ++i) birthday[i] = 0;
 }

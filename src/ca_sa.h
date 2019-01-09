@@ -37,17 +37,11 @@ class CASA : public CA {
  private:
   void computeAllocation();
   void generateInitialSolution();
-  void neighbor();
-  double acceptanceProbability(double T);
+  Neighbor neighbor();
+  double acceptanceProbability(double new_welfare, double T);
 
   std::vector<int> z;  // same as x, but for sellers
   double welfare = 0.;
-
-  // temporary vars
-  boost::numeric::ublas::matrix<int> _y;
-  std::vector<int> _x;
-  std::vector<int> _z;
-  double _welfare = 0.;
 
   // SA-specific params
   double T_max;

@@ -30,14 +30,14 @@ CACasanovaS::CACasanovaS(Instance instance_)
     bids_sorted.push_back(i);
   // sort bids descendingly by density
   std::sort(bids_sorted.begin(), bids_sorted.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_bids.getDensity()[i] > tmp_bids.getDensity()[j];
             });  // init sorted asks
   for (unsigned int j = 0; j < instance.getAsks().N(); ++j)
     asks_sorted.push_back(j);
-  // sort asks ascendingly by density
+  // sort asks ascendingly by score (average price)
   std::sort(asks_sorted.begin(), asks_sorted.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_asks.getAvgPrice()[i] < tmp_asks.getAvgPrice()[j];
             });
 }

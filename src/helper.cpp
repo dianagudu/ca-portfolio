@@ -138,6 +138,7 @@ boost::optional<InputParams> parse(int argc, char* argv[]) {
 }
 
 bool isStochastic(AuctionType type) {
+  // NOTE: Casanova(s) algos are stochastic, but already use random restarts
   if (type == +AuctionType::HILL2 || type == +AuctionType::HILL2S ||
       type == +AuctionType::SA || type == +AuctionType::SAS ||
       type == +AuctionType::CASANOVA || type == +AuctionType::CASANOVAS)
