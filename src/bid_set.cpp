@@ -42,7 +42,7 @@ BidSet BidSet::fromYAML(YAML::Node bidset) {
   return BidSet(values, quantities);
 }
 
-boost::unordered_map<unsigned int, double> BidSet::computeAvgPrices() {
+boost::unordered_map<unsigned int, double> BidSet::computeAvgPrices() const {
   boost::unordered_map<unsigned int, double> avg_price;
   for (unsigned int i = 0; i < N(); ++i) {
     unsigned int q_i = 0;
@@ -54,12 +54,12 @@ boost::unordered_map<unsigned int, double> BidSet::computeAvgPrices() {
   return avg_price;
 }
 
-boost::unordered_map<unsigned int, double> BidSet::computeDensities() {
+boost::unordered_map<unsigned int, double> BidSet::computeDensities() const {
     return computeDensities(std::vector<double>(L(), 1.));
 }
 
 boost::unordered_map<unsigned int, double> BidSet::computeDensities(
-    std::vector<double> f) {
+    std::vector<double> f) const {
   boost::unordered_map<unsigned int, double> density;
   for (unsigned int i = 0; i < N(); ++i) {
     double m_i = 0;
@@ -71,7 +71,7 @@ boost::unordered_map<unsigned int, double> BidSet::computeDensities(
   return density;
 }
 
-std::vector<unsigned int> BidSet::computeQPerResource() {
+std::vector<unsigned int> BidSet::computeQPerResource() const {
   std::vector<unsigned int> qpr(L(), 0);
   for (unsigned int i = 0; i < N(); ++i) {
     for (unsigned int k = 0; k < L(); ++k) {

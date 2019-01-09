@@ -35,16 +35,16 @@ class BidSet {
   BidSet() {}                                             // default constructor
   static BidSet fromYAML(YAML::Node bidset);
 
-  inline unsigned int N() { return quantities.size1(); }
-  inline unsigned int L() { return quantities.size2(); }
-  inline const auto &V() { return values; }
-  inline const auto &Q() { return quantities; }
+  inline unsigned int N() const { return quantities.size1(); }
+  inline unsigned int L() const { return quantities.size2(); }
+  inline const auto &V() const { return values; }
+  inline const auto &Q() const { return quantities; }
 
-  boost::unordered_map<unsigned int, double> computeAvgPrices();
-  boost::unordered_map<unsigned int, double> computeDensities();
+  boost::unordered_map<unsigned int, double> computeAvgPrices() const;
+  boost::unordered_map<unsigned int, double> computeDensities() const;
   boost::unordered_map<unsigned int, double> computeDensities(
-      std::vector<double> f);
-  std::vector<unsigned int> computeQPerResource();
+      std::vector<double> f) const;
+  std::vector<unsigned int> computeQPerResource() const;
 };
 
 #endif  // SRC_BID_SET_H_
