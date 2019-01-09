@@ -34,6 +34,7 @@ void CASAS::computeAllocation() {
 
   double T = T_max;
   bool frozen = false;
+  unsigned int num_frozen_temps = 0;
   while (T > T_min && !frozen) {
     frozen = true;
     for (unsigned int iter = 0; iter < niter; ++iter) {
@@ -44,9 +45,13 @@ void CASAS::computeAllocation() {
         z = _z;
         welfare = _welfare;
         frozen = false;
+        num_frozen_temps = 0;
       }
-      T *= alpha;
     }
+    T *= alpha;
+    if (frozen) ++num_frozen_temps;
+    // only stop when the system is frozen for 3 consecutive temperatures
+    if (num_frozen_temps < 3) frozen = false;
   }
 }
 
