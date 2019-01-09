@@ -32,15 +32,13 @@ class CAHill1S : public CA {
 
  private:
   void computeAllocation();
-  void doGreedy();
+  double neighbor();
   bool locallyImprove();
 
   double welfare = 0.;
 
   // temporary vars
-  boost::numeric::ublas::matrix<int> _y;
-  std::vector<int> _x;
-  double _welfare = 0.;
+  std::vector<int> best_ask_index;
 
   // critical index, or last allocated ask
   unsigned int critical_j;

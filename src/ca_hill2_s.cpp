@@ -87,12 +87,12 @@ void CAHill2S::generateInitialSolution() {
 
   // sort bids descendingly by density
   std::sort(bid_index.begin(), bid_index.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_bids.getDensity()[i] > tmp_bids.getDensity()[j];
             });
   // sort asks ascendingly by density
   std::sort(ask_index.begin(), ask_index.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
   return;

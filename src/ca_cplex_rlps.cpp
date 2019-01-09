@@ -58,11 +58,11 @@ void CACplexRLPS::computeAllocation() {
 
     // sort bids descendingly by continous x
     std::sort(bid_index.begin(), bid_index.end(),
-              [this](int i, int j) -> bool { return xi[i] > xi[j]; });
+              [&](int i, int j) -> bool { return xi[i] > xi[j]; });
 
     // sort asks descendingly by continuous x
     std::sort(ask_index.begin(), ask_index.end(),
-              [this](int i, int j) -> bool { return xj[i] > xj[j]; });
+              [&](int i, int j) -> bool { return xj[i] > xj[j]; });
 
     // run greedy
     unsigned int i = 0;

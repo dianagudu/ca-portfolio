@@ -24,24 +24,39 @@ CAHill1S::~CAHill1S() {}
 void CAHill1S::computeAllocation() {
   // sort bids descendingly by density
   std::sort(bid_index.begin(), bid_index.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_bids.getDensity()[i] > tmp_bids.getDensity()[j];
             });
   // sort asks ascendingly by density
   std::sort(ask_index.begin(), ask_index.end(),
-            [this](unsigned int i, unsigned int j) -> bool {
+            [&](unsigned int i, unsigned int j) -> bool {
               return tmp_asks.getDensity()[i] < tmp_asks.getDensity()[j];
             });
 
   // compute initial solution
-  doGreedy();
-  x = _x;
-  y = _y;
-  welfare = _welfare;
+  welfare = neighbor();
+  best_ask_index = ask_index;
 
   // gradient descent
   while (locallyImprove())
     ;
+
+  // compute solution based on best ordering
+  unsigned int i = 0;
+  unsigned int j = 0;
+  ask_index = best_ask_index;
+  welfare = 0;
+  while (i < instance.getBids().N() && j < instance.getAsks().N()) {
+    // seller ask_index[j] can allocate resources to bidder bid_index[i]
+    if (instance.canAllocate(bid_index[i], ask_index[j])) {
+      x[bid_index[i]] = 1;
+      y(bid_index[i], ask_index[j]) = 1;
+      welfare += instance.getBids().V()[bid_index[i]] -
+                 instance.getAsks().V()[ask_index[j]];
+      ++j;
+    }
+    ++i;
+  }
 }
 
 bool CAHill1S::locallyImprove() {
@@ -51,13 +66,12 @@ bool CAHill1S::locallyImprove() {
     // moving ask j to front
     std::rotate(ask_index.begin(), ask_index.begin() + j,
                 ask_index.begin() + j + 1);
-    // run greedy
-    doGreedy();
+    // get welfare of neighbor
+    double new_welfare = neighbor();
     // check improvement
-    if (_welfare > welfare) {
-      x = _x;
-      y = _y;
-      welfare = _welfare;
+    if (new_welfare > welfare) {
+      best_ask_index = ask_index;
+      welfare = new_welfare;
       return true;
     }
     ++j;
@@ -65,28 +79,20 @@ bool CAHill1S::locallyImprove() {
   return false;
 }
 
-void CAHill1S::doGreedy() {
-  unsigned int n = instance.getBids().N();
-  unsigned int m = instance.getAsks().N();
-
-  // reset allocation
-  _y = boost::numeric::ublas::zero_matrix<int>(n, m);
-  _x = std::vector<int>(n, 0);
-  _welfare = 0;
-
+double CAHill1S::neighbor() {
+  double new_welfare = 0.;
   unsigned int i = 0;
   unsigned int j = 0;
   critical_j = 0;
-  while (i < n && j < m) {
+  while (i < instance.getBids().N() && j < instance.getAsks().N()) {
     // seller ask_index[j] can allocate resources to bidder bid_index[i]
     if (instance.canAllocate(bid_index[i], ask_index[j])) {
-      _x[bid_index[i]] = 1;
-      _y(bid_index[i], ask_index[j]) = 1;
-      _welfare += instance.getBids().V()[bid_index[i]] -
-                  instance.getAsks().V()[ask_index[j]];
+      new_welfare += instance.getBids().V()[bid_index[i]] -
+                     instance.getAsks().V()[ask_index[j]];
       critical_j = j;
       ++j;
     }
     ++i;
   }
+  return new_welfare;
 }
