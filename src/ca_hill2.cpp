@@ -18,7 +18,8 @@
 #include "ca_hill2.h"
 
 CAHill2::CAHill2(Instance instance_)
-    : CA(instance_), z(instance_.getAsks().N(), 0),
+    : CA(instance_),
+      z(instance_.getAsks().N(), 0),
       distribution_neighbor(0, instance_.getBids().N() - 1) {}
 
 CAHill2::~CAHill2() {}
@@ -37,27 +38,25 @@ bool CAHill2::locallyImprove() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
 
-  // update vars
-  _y = y;
-  _x = x;
-  _z = z;
-  _welfare = welfare;
+  Neighbor neigh;
+  neigh.welfare = welfare;
+  neigh.found = false;
 
   // randomly select one bid
-  unsigned int i =  distribution_neighbor(generator);
-  if (_x[i] == 0) {
+  unsigned int i = distribution_neighbor(generator);
+  if (x[i] == 0) {
     // x_i==0, try to find an ask to match from sorted asks
     unsigned int j = 0;
     while (j < m) {
       // check if seller j has already allocated its resources
-      if (_z[ask_index[j]] == 0) {
+      if (z[ask_index[j]] == 0) {
         // seller ask_index[j] can allocate resources to bidder i
         if (instance.canAllocate(i, ask_index[j])) {
-          _x[i] = 1;
-          _y(i, ask_index[j]) = 1;
-          _z[ask_index[j]] = 1;
-          _welfare +=
+          neigh.welfare +=
               instance.getBids().V()[i] - instance.getAsks().V()[ask_index[j]];
+          neigh.bid = i;
+          neigh.ask = ask_index[j];
+          neigh.found = true;
           break;
         }
       }
@@ -65,11 +64,12 @@ bool CAHill2::locallyImprove() {
     }
   }
 
-  if (_welfare > welfare) {
-    x = _x;
-    y = _y;
-    z = _z;
-    welfare = _welfare;
+  if (neigh.found && neigh.welfare > welfare) {
+    // update allocation
+    x[neigh.bid] = 1;
+    z[neigh.ask] = 1;
+    y(neigh.bid, neigh.ask) = 1;
+    welfare = neigh.welfare;
     num_neighbors = 0;
     return true;
   }

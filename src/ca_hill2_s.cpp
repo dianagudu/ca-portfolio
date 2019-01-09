@@ -40,38 +40,37 @@ bool CAHill2S::locallyImprove() {
   unsigned int n = instance.getBids().N();
   unsigned int m = instance.getAsks().N();
 
-  // update vars
-  _y = y;
-  _x = x;
-  _z = z;
-  _welfare = welfare;
+  Neighbor neigh;
+  neigh.welfare = welfare;
+  neigh.found = false;
 
   // randomly select one ask
   unsigned int j = distribution_neighbor(generator);
-  if (_z[j] == 0) {
+  if (z[j] == 0) {
     // if z_j==0, try to find a bid to match from sorted bids
     unsigned int i = 0;
     while (i < n) {
       // check if bidder i has already allocated its resources
-      if (_x[bid_index[i]] == 0) {
+      if (x[bid_index[i]] == 0) {
         // seller j can allocate resources to bidder bid_index[i]
         if (instance.canAllocate(bid_index[i], j)) {
-          _x[bid_index[i]] = 1;
-          _y(bid_index[i], j) = 1;
-          _z[j] = 1;
-          _welfare +=
+          neigh.welfare +=
               instance.getBids().V()[bid_index[i]] - instance.getAsks().V()[j];
+          neigh.bid = bid_index[i];
+          neigh.ask = j;
+          neigh.found = true;
           break;
         }
       }
       ++i;
     }
   }
-  if (_welfare > welfare) {
-    x = _x;
-    y = _y;
-    z = _z;
-    welfare = _welfare;
+  if (neigh.found && neigh.welfare > welfare) {
+    // update allocation
+    x[neigh.bid] = 1;
+    z[neigh.ask] = 1;
+    y(neigh.bid, neigh.ask) = 1;
+    welfare = neigh.welfare;
     num_neighbors = 0;
     return true;
   }
