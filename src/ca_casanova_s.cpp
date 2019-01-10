@@ -19,7 +19,6 @@
 
 CACasanovaS::CACasanovaS(Instance instance_)
     : CA(instance_),
-      z(instance_.getAsks().N(), 0),
       maxSteps(instance_.getAsks().N()),
       theta(instance_.getAsks().N()/4),
       distribution_neighbor(0, instance_.getAsks().N() - 1),
@@ -74,13 +73,15 @@ void CACasanovaS::computeAllocation() {
     }
     if (welfare > best_welfare) {
       best_welfare = welfare;
-      best_y = y;
-      best_x = x;
+      best_allocated_bids = allocated_bids;
     }
   }
-  y = best_y;
-  x = best_x;
+  
   welfare = best_welfare;
+  for (auto it : best_allocated_bids) {
+    x[it.first] = 1;
+    y(it.first, it.second) = 1;
+  }
 }
 
 // Allocates the given ask (if possible).
@@ -91,12 +92,10 @@ void CACasanovaS::insert(unsigned int j) {
   while (i < bid_index.size()) {
     // seller j can allocate resources to bidder i
     if (instance.canAllocate(bid_index[i], ask_index[j])) {
-      x[bid_index[i]] = 1;
-      z[ask_index[j]] = 1;
-      y(bid_index[i], ask_index[j]) = 1;
       welfare += instance.getBids().V()[bid_index[i]] -
                  instance.getAsks().V()[ask_index[j]];
       last_improved_era = era;
+      allocated_bids[bid_index[i]] = ask_index[j];
       bid_index.erase(bid_index.begin() + i);
       // update ask birthday
       birthday[ask_index[j]] = era;
@@ -109,20 +108,16 @@ void CACasanovaS::insert(unsigned int j) {
   // return;
   // if no bidder could be found, look for one that has already been allocated
   // a bundle, but would gain more by switching to this seller
-  i = 0;
-  while (i < instance.getBids().N()) {
-    if (x[bids_sorted[i]] && instance.canAllocate(bids_sorted[i], ask_index[j])) {
+  for (auto it : allocated_bids) {
+    i = it.first;
+    if (instance.canAllocate(i, ask_index[j])) {
       // check which seller already allocated its goods to this bidder
-      unsigned int alloc_j = 0;
-      while (y(bids_sorted[i], alloc_j) == 0) ++alloc_j;
+      unsigned int alloc_j = it.second;
 
       // change from alloc_j to ask_index[j] only if there is an increase in revenue
       if (instance.getAsks().V()[alloc_j] >
           instance.getAsks().V()[ask_index[j]]) {
-        z[ask_index[j]] = 1;
-        z[alloc_j] = 0;
-        y(bids_sorted[i], ask_index[j]) = 1;
-        y(bids_sorted[i], alloc_j) = 0;
+        allocated_bids[i] = ask_index[j];
         welfare += instance.getAsks().V()[alloc_j] -
                    instance.getAsks().V()[ask_index[j]];
         last_improved_era = era;
@@ -146,10 +141,7 @@ void CACasanovaS::insert(unsigned int j) {
 }
 
 void CACasanovaS::resetBetweenTries() {
-  x = std::vector<int>(instance.getBids().N(), 0);
-  z = std::vector<int>(instance.getAsks().N(), 0);
-  y = boost::numeric::ublas::zero_matrix<int>(instance.getBids().N(),
-                                              instance.getAsks().N());
+  allocated_bids.clear();
   bid_index = bids_sorted;
   ask_index = asks_sorted;
   welfare = 0.;
@@ -164,36 +156,29 @@ void CACasanovaS::resetBetweenTries() {
 
   stats = Stats();
   // reset birthdays
-  for (unsigned int j = 0; j < instance.getAsks().N(); ++j) birthday[j] = 0;
+  birthday = std::vector<int>(instance.getAsks().N(), -1);
 }
 
 void CACasanovaS::resetAllocation() {
   resetBase();
+  allocated_bids.clear();
   welfare = 0.;
-  z = std::vector<int>(instance.getAsks().N(), 0);
   // reset birthdays
-  for (unsigned int j = 0; j < instance.getAsks().N(); ++j) birthday[j] = 0;
+  birthday = std::vector<int>(instance.getAsks().N(), -1);
   // reset best welfare between computeAllocation calls
   best_welfare = 0.;
-  best_x = std::vector<int>(instance.getBids().N(), 0);
-  best_y = boost::numeric::ublas::zero_matrix<int>(instance.getBids().N(),
-                                                   instance.getAsks().N());
+  best_allocated_bids.clear();
 }
 
 bool CACasanovaS::noSideEffects() {
   // side effects from casanova-related variables
   if (welfare) return false;
-  for (unsigned int j = 0; j < instance.getAsks().N(); ++j)
-    if (z[j]) return false;
+  if (!allocated_bids.empty()) return false;
   for (unsigned int i = 0; i < instance.getBids().N(); ++i)
-    if (birthday[i]) return false;
+    if (birthday[i] >= 0) return false;
 
   if (best_welfare) return false;
-  for (unsigned int i = 0; i < instance.getBids().N(); ++i)
-    if (best_x[i]) return false;
-  for (unsigned int i = 0; i < instance.getBids().N(); ++i)
-    for (unsigned int j = 0; j < instance.getAsks().N(); ++j)
-      if (best_y(i, j)) return false;
+  if (!best_allocated_bids.empty()) return false;
 
   return noSideEffectsBase();
 }

@@ -158,7 +158,7 @@ void CACasanova::resetBetweenTries() {
   stats = Stats();
 
   // reset birthdays
-  for (unsigned int i = 0; i < instance.getBids().N(); ++i) birthday[i] = 0;
+  birthday = std::vector<int>(instance.getBids().N(), -1);
 }
 
 void CACasanova::resetAllocation() {
@@ -166,7 +166,7 @@ void CACasanova::resetAllocation() {
   allocated_asks.clear();
   welfare = 0.;
   // reset birthdays
-  for (unsigned int i = 0; i < instance.getBids().N(); ++i) birthday[i] = 0;
+  birthday = std::vector<int>(instance.getBids().N(), -1);
   // reset best welfare between computeAllocation calls
   best_welfare = 0.;
   best_allocated_asks.clear();
@@ -177,7 +177,7 @@ bool CACasanova::noSideEffects() {
   if (welfare) return false;
   if (!allocated_asks.empty()) return false;
   for (unsigned int i = 0; i < instance.getBids().N(); ++i)
-    if (birthday[i]) return false;
+    if (birthday[i] >= 0) return false;
 
   if (best_welfare) return false;
   if (!best_allocated_asks.empty()) return false;

@@ -40,12 +40,12 @@ class CACasanovaS : public CA {
   inline int age(unsigned int j);
   void insert(unsigned int j);
 
-  std::vector<int> z;
   std::vector<int> bids_sorted;
   std::vector<int> asks_sorted;
+  boost::unordered_map<int, int> allocated_bids;
   double welfare = 0.;
 
-  boost::unordered_map<int, int> birthday;
+  std::vector<int> birthday;
   unsigned int era = 0;
   unsigned int maxSteps;
 
@@ -65,8 +65,7 @@ class CACasanovaS : public CA {
   std::uniform_real_distribution<> distribution_np;
 
   // the best solution
-  boost::numeric::ublas::matrix<int> best_y;
-  std::vector<int> best_x;
+  boost::unordered_map<int, int> best_allocated_bids;
   double best_welfare = 0.;
 };
 

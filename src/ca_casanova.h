@@ -45,7 +45,7 @@ class CACasanova : public CA {
   boost::unordered_map<int, int> allocated_asks;
   double welfare = 0.;
 
-  boost::unordered_map<int, int> birthday;
+  std::vector<int> birthday;
   unsigned int era = 0;
   unsigned int maxSteps;
 
