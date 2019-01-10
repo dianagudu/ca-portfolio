@@ -16,6 +16,7 @@
 // --------------------------------------------------------------------------
 
 #include "src/bid_set.h"
+#include <boost/numeric/ublas/matrix_proxy.hpp>
 
 BidSet::BidSet(const std::vector<double> &v_v,
                const boost::numeric::ublas::matrix<int> &m_q)
@@ -42,6 +43,19 @@ BidSet BidSet::fromYAML(YAML::Node bidset) {
   return BidSet(values, quantities);
 }
 
+BidSet BidSet::sample(double sampling_ratio) {
+  unsigned int sample_n = (int)(N() * sampling_ratio);
+
+  std::vector<double> sample_values;
+  sample_values.resize(sample_n);
+  std::copy_n(values.begin(), sample_n, sample_values.begin());
+
+  auto sample_quantities =
+      boost::numeric::ublas::subslice(quantities, 0, 1, sample_n, 0, 1, L());
+
+  return BidSet(sample_values, sample_quantities);
+}
+
 boost::unordered_map<unsigned int, double> BidSet::computeAvgPrices() const {
   boost::unordered_map<unsigned int, double> avg_price;
   for (unsigned int i = 0; i < N(); ++i) {
@@ -55,7 +69,7 @@ boost::unordered_map<unsigned int, double> BidSet::computeAvgPrices() const {
 }
 
 boost::unordered_map<unsigned int, double> BidSet::computeDensities() const {
-    return computeDensities(std::vector<double>(L(), 1.));
+  return computeDensities(std::vector<double>(L(), 1.));
 }
 
 boost::unordered_map<unsigned int, double> BidSet::computeDensities(

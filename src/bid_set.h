@@ -34,6 +34,7 @@ class BidSet {
   BidSet(const BidSet &copy);                             // copy constructor
   BidSet() {}                                             // default constructor
   static BidSet fromYAML(YAML::Node bidset);
+  BidSet sample(double sampling_ratio);
 
   inline unsigned int N() const { return quantities.size1(); }
   inline unsigned int L() const { return quantities.size2(); }

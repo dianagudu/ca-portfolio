@@ -31,6 +31,8 @@ class Instance {
   Instance(std::string filename);  // creates instance from input file
   ~Instance(){};
 
+  Instance sample(double sampling_ratio);
+
   bool canAllocate(int bidder, int seller);
 
   inline unsigned int L() { return bids.L(); }

@@ -32,6 +32,10 @@ Instance::Instance(std::string filename) {
   assert(bids.L() == asks.L());
 }
 
+Instance Instance::sample(double sampling_ratio) {
+  return Instance(bids.sample(sampling_ratio), asks.sample(sampling_ratio));
+}
+
 bool Instance::canAllocate(int bidder, int seller) {
   // no allocation possible if bid value is less than the asked value
   if (bids.V()[bidder] < asks.V()[seller]) return false;

@@ -18,8 +18,8 @@
 #ifndef SRC_RUNNER_H_
 #define SRC_RUNNER_H_
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "src/helper.h"
 #include "src/instance.h"

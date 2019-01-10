@@ -50,25 +50,25 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
 
 void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
                      std::string infile) {
-  std::vector<AuctionType> algos;
   switch (mode) {
     case RunMode::ALL:
-      for (auto type : AuctionType::_values()) algos.push_back(type);
+      for (auto type : AuctionType::_values())
+        Runner::runAlgo(instance, type, outfile, infile);
       break;
     case RunMode::HEURISTICS:
       for (auto type : AuctionType::_values())
         if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-          algos.push_back(type);
+          Runner::runAlgo(instance, type, outfile, infile);
       break;
     case RunMode::SAMPLES:
-      for (auto type : AuctionType::_values())
-        if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-          algos.push_back(type);
+      double sampling_ratios[] = {0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95};
+      for (double sampling_ratio : sampling_ratios) {
+        Instance probe = instance.sample(sampling_ratio);
+        for (auto type : AuctionType::_values())
+          if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
+            Runner::runAlgo(probe, type, outfile, infile);
+      }
       break;
-  }
-
-  for (auto type : algos) {
-    Runner::runAlgo(instance, type, outfile, infile);
   }
 }
 
