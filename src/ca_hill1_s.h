@@ -32,7 +32,7 @@ class CAHill1S : public CA {
 
  private:
   void computeAllocation();
-  double neighbor();
+  double computeGreedyWelfare();
   bool locallyImprove();
 
   double welfare = 0.;

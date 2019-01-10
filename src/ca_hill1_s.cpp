@@ -34,25 +34,21 @@ void CAHill1S::computeAllocation() {
             });
 
   // compute initial solution
-  welfare = neighbor();
+  welfare = computeGreedyWelfare();
   best_ask_index = ask_index;
 
   // gradient descent
   while (locallyImprove())
     ;
 
-  // compute solution based on best ordering
+  // compute solution (x and y) based on best ordering; welfare already computed
+  ask_index = best_ask_index;
   unsigned int i = 0;
   unsigned int j = 0;
-  ask_index = best_ask_index;
-  welfare = 0;
   while (i < instance.getBids().N() && j < instance.getAsks().N()) {
-    // seller ask_index[j] can allocate resources to bidder bid_index[i]
     if (instance.canAllocate(bid_index[i], ask_index[j])) {
       x[bid_index[i]] = 1;
       y(bid_index[i], ask_index[j]) = 1;
-      welfare += instance.getBids().V()[bid_index[i]] -
-                 instance.getAsks().V()[ask_index[j]];
       ++j;
     }
     ++i;
@@ -67,7 +63,7 @@ bool CAHill1S::locallyImprove() {
     std::rotate(ask_index.begin(), ask_index.begin() + j,
                 ask_index.begin() + j + 1);
     // get welfare of neighbor
-    double new_welfare = neighbor();
+    double new_welfare = computeGreedyWelfare();
     // check improvement
     if (new_welfare > welfare) {
       best_ask_index = ask_index;
@@ -79,7 +75,7 @@ bool CAHill1S::locallyImprove() {
   return false;
 }
 
-double CAHill1S::neighbor() {
+double CAHill1S::computeGreedyWelfare() {
   double new_welfare = 0.;
   unsigned int i = 0;
   unsigned int j = 0;
