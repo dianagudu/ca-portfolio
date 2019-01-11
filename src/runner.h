@@ -31,11 +31,11 @@ class Runner {
 
  private:
   static void runAlgo(Instance instance, AuctionType type, std::string outfile,
-                      std::string infile);
+                      std::string infile, double sampling_ratio);
   static void runMode(Instance instance, RunMode mode, std::string outfile,
                       std::string infile);
   static void writeStats(Stats stats, AuctionType type, std::string outfile,
-                         std::string infile);
+                         std::string infile, double sampling_ratio);
 };
 
 #endif  // SRC_RUNNER_H_

@@ -25,7 +25,7 @@
 #include "src/ca_factory.h"
 
 void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
-                     std::string infile) {
+                     std::string infile, double sampling_ratio) {
   try {
     CA* ca = CAFactory::createAuction(instance, type);
     if (!ca)
@@ -38,7 +38,7 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
       ca->run();
       // ca->printResults(type._to_string());
       auto stats = ca->getStats();
-      writeStats(stats, type, outfile, infile);
+      writeStats(stats, type, outfile, infile, sampling_ratio);
     }
     delete ca;
   } catch (std::invalid_argument& e) {
@@ -53,20 +53,23 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
   switch (mode) {
     case RunMode::ALL:
       for (auto type : AuctionType::_values())
-        Runner::runAlgo(instance, type, outfile, infile);
+        Runner::runAlgo(instance, type, outfile, infile, 1.0);
       break;
     case RunMode::HEURISTICS:
       for (auto type : AuctionType::_values())
         if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-          Runner::runAlgo(instance, type, outfile, infile);
+          Runner::runAlgo(instance, type, outfile, infile, 1.0);
       break;
     case RunMode::SAMPLES:
-      double sampling_ratios[] = {0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95};
+      double sampling_ratios[] = {0.05, 0.1,  0.15, 0.2,  0.25, 0.3,  0.35,
+                                  0.4,  0.45, 0.5,  0.55, 0.6,  0.65, 0.7,
+                                  0.75, 0.8,  0.85, 0.9,  0.95};
       for (double sampling_ratio : sampling_ratios) {
         Instance probe = instance.sample(sampling_ratio);
         for (auto type : AuctionType::_values())
           if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-            Runner::runAlgo(probe, type, outfile, infile);
+            Runner::runAlgo(probe, type, outfile, infile + ".samples",
+                            sampling_ratio);
       }
       break;
   }
@@ -79,7 +82,7 @@ void Runner::run(InputParams params) {
     boost::unordered_map<std::string, Stats> stats;
 
     if (params.algo) {  // when specified, run a single algorithm
-      runAlgo(instance, *params.algo, params.outfile, infile);
+      runAlgo(instance, *params.algo, params.outfile, infile, 1.0);
     } else if (params.mode) {  // when specified, run in given mode
       runMode(instance, *params.mode, params.outfile, infile);
     } else {  // defaults to HEURISTICS mode
@@ -89,7 +92,7 @@ void Runner::run(InputParams params) {
 }
 
 void Runner::writeStats(Stats stats, AuctionType type, std::string outfile,
-                        std::string infile) {
+                        std::string infile, double sampling_ratio) {
   // set output mode: standard out or file
   std::ostream* osp = &std::cout;
   std::ofstream fout;
@@ -99,7 +102,11 @@ void Runner::writeStats(Stats stats, AuctionType type, std::string outfile,
   }
 
   // write stats
-  *osp << infile << "," << type << stats << std::endl;
+  if (sampling_ratio == 1.0)
+    *osp << infile << "," << type << stats << std::endl;
+  else
+    *osp << sampling_ratio << "," << infile << "," << type << stats
+         << std::endl;
 
   // close file
   if (outfile != "") {
