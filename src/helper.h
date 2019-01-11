@@ -57,10 +57,10 @@ constexpr const char* describe_algorithms(AuctionType type) {
     case AuctionType::GREEDY2: return "greedy algorihm with scarcity-based relevance factors";
     case AuctionType::GREEDY3: return "greedy algorihm with relative scarcity-based relevance factors";
     case AuctionType::GREEDY1S: return "greedy algorihm with focus on sellers";
-    case AuctionType::HILL1: return "hill climbing algorihm";
-    case AuctionType::HILL1S: return "hill climbing algorihm with focus on sellers";
-    case AuctionType::HILL2: return "hill climbing algorihm";
-    case AuctionType::HILL2S: return "hill climbing algorihm with focus on sellers";
+    case AuctionType::HILL1: return "hill climbing algorihm based on reordering";
+    case AuctionType::HILL1S: return "hill climbing algorihm based on reordering with focus on sellers";
+    case AuctionType::HILL2: return "hill climbing algorihm based on toggling";
+    case AuctionType::HILL2S: return "hill climbing algorihm based on toggling with focus on sellers";
     case AuctionType::SA: return "simulated annealing algorithm";
     case AuctionType::SAS: return "simulated annealing algorithm with focus on sellers";
     case AuctionType::CASANOVA: return "Casanova algorithm (stochastic local search)";
@@ -83,19 +83,18 @@ constexpr const char* describe_run_modes(RunMode mode) {
 constexpr auto algo_descriptions = better_enums::make_map(describe_algorithms);
 constexpr auto mode_descriptions = better_enums::make_map(describe_run_modes);
 
-
 typedef struct _InputParams_ {
-    better_enums::optional<RunMode> mode;
-    better_enums::optional<AuctionType> algo;
-    std::string outfile;
-    std::vector<std::string> infiles;
+  better_enums::optional<RunMode> mode;
+  better_enums::optional<AuctionType> algo;
+  std::string outfile;
+  std::vector<std::string> infiles;
 } InputParams;
 
 typedef struct _Neighbor_ {
-    unsigned int bid;
-    unsigned int ask;
-    double welfare;
-    bool found;
+  unsigned int bid;
+  unsigned int ask;
+  double welfare;
+  bool found;
 } Neighbor;
 
 template <typename T>
