@@ -2459,13 +2459,13 @@ params:
     binning_counts: 8
     binning_type: &id001 !!python/object/apply:ingen.binning.Binning_Types [1]
     domain: [128, 128, 128]
-    model_file: /tmp/a
+    model: /tmp/a
   bids:
     amount: 1000
     binning_counts: [8, 8, 8]
     binning_type: *id001
     domain: [128, 128, 128]
-    model_file: /tmp/a
+    model: /tmp/a
   cost_model:
     fixed: [0.0, 0.0, 1.0]
     slope: [1.0, 1.0, 1.0]
