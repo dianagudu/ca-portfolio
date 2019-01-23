@@ -10,11 +10,20 @@ A portfolio of heuristic algorithms for Combinatorial Auctions
 
 Free academic licenses for IBM's ILOG CPLEX software are [available](https://www.ibm.com/developerworks/community/blogs/jfp/entry/cplex_studio_in_ibm_academic_initiative?lang=en).
 
-Include and library paths for `CPLEX` and ``boost`` can be changed in the ``makefile``.
+Include and library paths for ``CPLEX`` and ``boost`` can be changed in the ``makefile``.
 
 On Debian stretch:
 
     $ sudo apt-get install libboost-all-dev libyaml-cpp0.5v5 libyaml-cpp-dev
+
+On bwUniCluster, install ``yaml-cpp`` and ``boost`` from source. Tested
+versions:
+
+* ``CPLEX``: 12.6.3
+* ``yaml-cpp``: 0.6.2
+* ``boost``: 1.69.0
+* ``gcc``: 8.2.0
+
 
 ## Running the code
 
@@ -25,6 +34,10 @@ Compile the source code:
 Compile the source code with the CPLEX library:
 
     $ make CPLEX=true
+
+On bwUniCluster:
+
+    $ make -f makefile.uc1 CPLEX=true
 
 Run unit tests:
 
