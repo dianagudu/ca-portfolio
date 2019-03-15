@@ -64,9 +64,9 @@ void CACasanovaS::computeAllocation() {
           insert(0);
         } else {
           if (distribution_np(generator) < np) {
-            insert(0);
-          } else {
             insert(1);
+          } else {
+            insert(0);
           }
         }
       }
