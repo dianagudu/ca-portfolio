@@ -48,7 +48,8 @@ BETTER_ENUM(AuctionType, int,
 BETTER_ENUM(RunMode, int,
   ALL = 0,
   HEURISTICS,
-  SAMPLES
+  SAMPLES,
+  RANDOM
 )
 
 constexpr const char* describe_algorithms(AuctionType type) {
@@ -76,6 +77,7 @@ constexpr const char* describe_run_modes(RunMode mode) {
     case RunMode::ALL: return "run all algorithms";
     case RunMode::HEURISTICS: return "run all heuristic algorithms (exclude CPLEX and RLPS from all)";
     case RunMode::SAMPLES: return "run all heuristic algorithms on instance and samples";
+    case RunMode::RANDOM: return "run all stochastic algorithms";
     default: return "invalid mode";
   }
 }

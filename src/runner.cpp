@@ -33,7 +33,7 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
           std::string("Something went wrong when creating auction of type ") +
           type._to_string());
     unsigned int nruns = 1;
-    if (isStochastic(type)) nruns = 10;
+    if (isStochastic(type)) nruns = 90;
     for (unsigned int run = 0; run < nruns; ++run) {
       ca->run();
       // ca->printResults(type._to_string());
@@ -61,16 +61,23 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
           Runner::runAlgo(instance, type, outfile, infile, 1.0);
       break;
     case RunMode::SAMPLES:
-      double sampling_ratios[] = {0.05, 0.1,  0.15, 0.2,  0.25, 0.3,  0.35,
-                                  0.4,  0.45, 0.5,  0.55, 0.6,  0.65, 0.7,
-                                  0.75, 0.8,  0.85, 0.9,  0.95};
-      for (double sampling_ratio : sampling_ratios) {
-        Instance probe = instance.sample(sampling_ratio);
-        for (auto type : AuctionType::_values())
-          if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-            Runner::runAlgo(probe, type, outfile, infile + ".samples",
-                            sampling_ratio);
+      {
+        double sampling_ratios[] = {0.05, 0.1,  0.15, 0.2,  0.25, 0.3,  0.35,
+                                    0.4,  0.45, 0.5,  0.55, 0.6,  0.65, 0.7,
+                                    0.75, 0.8,  0.85, 0.9,  0.95};
+        for (double sampling_ratio : sampling_ratios) {
+          Instance probe = instance.sample(sampling_ratio);
+          for (auto type : AuctionType::_values())
+            if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
+              Runner::runAlgo(probe, type, outfile, infile + ".samples",
+                              sampling_ratio);
+        }
       }
+      break;
+    case RunMode::RANDOM:
+      for (auto type : AuctionType::_values())
+        if (isStochastic(type))
+          Runner::runAlgo(instance, type, outfile, infile, 1.0);
       break;
   }
 }
