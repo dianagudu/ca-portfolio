@@ -33,7 +33,7 @@ void Runner::runAlgo(Instance instance, AuctionType type, std::string outfile,
           std::string("Something went wrong when creating auction of type ") +
           type._to_string());
     unsigned int nruns = 1;
-    if (isStochastic(type)) nruns = 90;
+    if (isStochastic(type)) nruns = 10;
     for (unsigned int run = 0; run < nruns; ++run) {
       ca->run();
       // ca->printResults(type._to_string());
@@ -69,7 +69,7 @@ void Runner::runMode(Instance instance, RunMode mode, std::string outfile,
           Instance probe = instance.sample(sampling_ratio);
           for (auto type : AuctionType::_values())
             if (type != +AuctionType::CPLEX && type != +AuctionType::RLPS)
-              Runner::runAlgo(probe, type, outfile, infile + ".samples",
+              Runner::runAlgo(probe, type, outfile, infile,
                               sampling_ratio);
         }
       }
